@@ -1,18 +1,37 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
-import { Form, Input, Button } from 'antd';
-import { UserOutlined, LockOutlined, MailOutlined, PhoneOutlined } from '@ant-design/icons';
+import { Form, Input, Button, message, notification } from 'antd';
+import { UserOutlined, LockOutlined, MailOutlined, PhoneOutlined, LoginOutlined } from '@ant-design/icons';
 
 import * as authServices from '../../services/authServices';
 import styles from './Register.module.scss';
 
 function Register() {
+    const navigate = useNavigate();
+    const [isSubmit, setIsSubmit] = useState(false);
+
     const onFinish = (values) => {
-        const fetchApi = async () => {
-            const result = await authServices.register(values);
-            console.log(result);
+        const { fullname, email, password, phone } = values;
+        setIsSubmit(true);
+
+        const fetchApiRegister = async () => {
+            const result = await authServices.register({ fullname, email, password, phone });
+            setIsSubmit(false);
+
+            if (!!result && result.errCode === 0) {
+                navigate('/');
+                message.success(result.message, 3);
+            } else if (result.errCode !== 0) {
+                notification.error({
+                    message: 'Có lỗi xảy ra.',
+                    description: result.errMessage,
+                    duration: 5,
+                });
+            }
         };
 
-        fetchApi();
+        fetchApiRegister();
     };
 
     return (
@@ -107,7 +126,7 @@ function Register() {
             </Form.Item>
 
             <Form.Item>
-                <Button type="primary" htmlType="submit" block>
+                <Button type="primary" htmlType="submit" block loading={isSubmit} icon={<LoginOutlined />}>
                     Đăng ký
                 </Button>
             </Form.Item>

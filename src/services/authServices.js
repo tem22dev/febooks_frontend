@@ -1,12 +1,19 @@
 import request from '../utils/request';
 
-export const register = async (values) => {
+export const register = async ({ ...values }) => {
     try {
-        const res = await request.post('auth/register', {
-            values,
-        });
+        const res = await request.post('auth/register', values);
+        return res;
+    } catch (error) {
+        // throw Error(error)
+        console.log(error);
+    }
+};
 
-        return res.data;
+export const login = async ({ ...values }) => {
+    try {
+        const res = await request.post('auth/login', values);
+        return res;
     } catch (error) {
         console.log(error);
     }
