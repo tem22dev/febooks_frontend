@@ -7,7 +7,7 @@ import { UserOutlined, LockOutlined, MailOutlined, PhoneOutlined, LoginOutlined 
 import * as authServices from '../../services/authServices';
 import styles from './Register.module.scss';
 
-function Register() {
+function Register({ setKey, login }) {
     const navigate = useNavigate();
     const [isSubmit, setIsSubmit] = useState(false);
 
@@ -20,8 +20,12 @@ function Register() {
             setIsSubmit(false);
 
             if (!!result && result.errCode === 0) {
-                navigate('/');
+                // navigate('/');
+                setKey(login);
                 message.success(result.message, 3);
+                setTimeout(() => {
+                    message.info('Tiến hành đăng nhập để vào hệ thống!', 10);
+                }, 3000);
             } else if (result.errCode !== 0) {
                 notification.error({
                     message: 'Có lỗi xảy ra.',

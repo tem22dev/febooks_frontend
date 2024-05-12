@@ -4,12 +4,12 @@ import Footer from '../components/Footer';
 
 function DefaultLayout({ children }) {
     return (
-        <div>
+        <>
             <Header />
-            <Sidebar />
+            {/* <Sidebar /> */}
             {children}
-            <Footer />
-        </div>
+            {/* <Footer /> */}
+        </>
     );
 }
 

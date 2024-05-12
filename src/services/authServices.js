@@ -18,3 +18,22 @@ export const login = async ({ ...values }) => {
         console.log(error);
     }
 };
+
+export const callFetchAccount = async () => {
+    try {
+        const res = await request.get('auth/account');
+        return res;
+    } catch (error) {
+        throw Error(error);
+    }
+};
+
+export const callLogout = async () => {
+    try {
+        const res = await request.post('auth/logout');
+        return res;
+    } catch (error) {
+        // throw Error(error)
+        console.log(error);
+    }
+};

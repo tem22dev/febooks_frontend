@@ -1,11 +1,14 @@
 const routes = {
     home: '/',
     auth: '/auth',
+    bookDetail: '/book-detail/:slug',
     checkout: '/checkout',
-    bookDetail: '/book-detail',
     // Admin
-    dash: '/dash',
-    dashAuth: '/dash/login',
+    dash: 'admin/dash',
+    book: 'admin/dash/books',
+    user: 'admin/dash/users',
+    order: 'admin/dash/orders',
+    // dashAuth: 'admin/auth/login',
 };
 
 export default routes;

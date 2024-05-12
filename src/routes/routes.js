@@ -2,15 +2,19 @@ import config from '../config';
 
 // Layouts
 import { HeaderOnly } from '../layouts';
-import { NoLayout } from '../layouts';
-import Dashboard from '../pages/admin/Dashboard';
-import Login from '../pages/admin/Login';
+// import { NoLayout } from '../layouts';
 
 // Pages
 import Home from '../pages/Home';
 import Auth from '../pages/Auth';
 import Checkout from '../pages/Checkout';
 import BookDetail from '../pages/BookDetail';
+
+import Dashboard from '../pages/Admin/Dashboard';
+import Book from '../pages/Admin/Book';
+import User from '../pages/Admin/User';
+import Order from '../pages/Admin/Order';
+// import Login from '../pages/Admin/Login';
 
 // Public routes
 const publicRoutes = [
@@ -22,6 +26,11 @@ const publicRoutes = [
 ];
 
 // Public routes
-const privateRoutes = [{ path: config.routes.dash, component: Dashboard }];
+const privateRoutes = [
+    { path: config.routes.dash, component: Dashboard },
+    { path: config.routes.book, component: Book },
+    { path: config.routes.user, component: User },
+    { path: config.routes.order, component: Order },
+];
 
 export { publicRoutes, privateRoutes };

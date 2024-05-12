@@ -1,0 +1,24 @@
+.header {
+    display: flex;
+    align-items: center;
+}
+.wrapper {
+    margin-left: auto;
+    margin-right: 18px;
+
+    .account {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .avatar {
+        margin-right: 8px;
+    }
+
+    .name {
+        font-size: 1.5rem;
+        font-weight: 500;
+        margin-right: 4px;
+    }
+}

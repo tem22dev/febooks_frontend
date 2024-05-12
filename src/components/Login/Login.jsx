@@ -1,14 +1,19 @@
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+// eslint-disable-next-line no-unused-vars
 import clsx from 'clsx';
 import { Form, Input, Button, Checkbox, message, notification } from 'antd';
 import { LockOutlined, MailOutlined, LoginOutlined } from '@ant-design/icons';
 
 import * as authServices from '../../services/authServices';
+import { doLoginAccount } from '../../redux/account/accountSlice';
+// eslint-disable-next-line no-unused-vars
 import styles from './Login.module.scss';
 
 function Login() {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const [isSubmit, setIsSubmit] = useState(false);
 
     const onFinish = (values) => {
@@ -20,6 +25,9 @@ function Login() {
             setIsSubmit(false);
 
             if (!!result && result.errCode === 0) {
+                localStorage.setItem('access_token', result.data.accessToken);
+                dispatch(doLoginAccount(result.data.user));
+
                 navigate('/');
                 message.success(result.message, 3);
             } else if (result.errCode !== 0) {

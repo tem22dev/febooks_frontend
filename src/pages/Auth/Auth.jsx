@@ -22,7 +22,7 @@ function Auth() {
 
     const contentList = {
         login: <Login />,
-        register: <Register />,
+        register: <Register setKey={setActiveTabKey} login={tabList[0].key} />,
     };
 
     const onTabChange = (key) => {

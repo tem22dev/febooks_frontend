@@ -1,13 +1,19 @@
+import { Layout } from 'antd';
+
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 
+const { Content } = Layout;
+
 function DefaultLayout({ children }) {
     return (
-        <div>
-            <Header />
+        <Layout>
             <Sidebar />
-            {children}
-        </div>
+            <Layout>
+                <Header />
+                <Content>{children}</Content>
+            </Layout>
+        </Layout>
     );
 }
 
