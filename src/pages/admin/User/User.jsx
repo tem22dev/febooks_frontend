@@ -9,7 +9,7 @@ import {
     EditOutlined,
     QuestionCircleOutlined,
 } from '@ant-design/icons';
-import { Layout, Button, Form, Space, Table, Tag, Popconfirm } from 'antd';
+import { Layout, Button, Form, Space, Table, Tag, Popconfirm, message } from 'antd';
 
 import SearchUser from './SearchUser';
 import DetailUser from './DetailUser';
@@ -38,9 +38,44 @@ function User() {
     const [users, setUsers] = useState([]);
     const [loadingTable, setLoadingTable] = useState(false);
 
+    // Map data
+    const handleMapDataUser = (data) => {
+        const listUser = data.map((user) => ({
+            key: user.id,
+            fullname: user.fullname,
+            email: user.email,
+            phone: user.phone,
+            gender: user.gender,
+            address: user.address,
+            active: user.active,
+            role: user.role,
+            avatar: user.avatar,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt,
+        }));
+        return listUser;
+    };
+
     // Event search
-    const onFinishSearch = (values) => {
-        console.log('Received values of form: ', values);
+    const onFinishSearch = async (values) => {
+        const { fullname, email, phone } = values;
+        let params = {};
+        if (fullname) {
+            params = { fullname, ...params };
+        }
+        if (email) {
+            params = { email, ...params };
+        }
+        if (phone) {
+            params = { phone, ...params };
+        }
+        const listUser = await userService.searchUser(params);
+        if (listUser.data.length === 0) {
+            message.info('Không tìm thấy người dùng', 3);
+            return;
+        }
+        const dataMap = handleMapDataUser(listUser.data);
+        setUsers(dataMap);
     };
 
     // Handle Detail user
@@ -206,8 +241,10 @@ function User() {
     const fetchListUser = async () => {
         setLoadingTable(true);
         const listUser = await userService.getAllUser();
+
         if (listUser && listUser.errCode === 0) {
-            setUsers(listUser.data);
+            const dataMap = handleMapDataUser(listUser.data);
+            setUsers(dataMap);
             setLoadingTable(false);
         }
     };
@@ -238,7 +275,7 @@ function User() {
                         <Button type="primary" icon={<PlusCircleOutlined />} onClick={showModalAddUser}>
                             Thêm mới
                         </Button>
-                        <Button type="text" icon={<ReloadOutlined />} />
+                        <Button type="text" icon={<ReloadOutlined />} onClick={fetchListUser} />
                     </Space>
                 </div>
 
