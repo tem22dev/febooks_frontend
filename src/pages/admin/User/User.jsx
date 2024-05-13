@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import {
     LogoutOutlined,
@@ -17,6 +17,7 @@ import UpdateUser from './UpdateUser';
 import AddUser from './AddUser';
 import ImportUser from './ImportUser';
 import styles from './User.module.scss';
+import * as userService from '../../../services/userService';
 
 function User() {
     const { Content } = Layout;
@@ -33,6 +34,9 @@ function User() {
 
     const [openImportUser, setOpenImportUser] = useState(false);
     const [confirmLoadingImportUser, setConfirmLoadingImportUser] = useState(false);
+
+    const [users, setUsers] = useState([]);
+    const [loadingTable, setLoadingTable] = useState(false);
 
     // Event search
     const onFinishSearch = (values) => {
@@ -147,10 +151,11 @@ function User() {
                 multiple: 2,
             },
             render: (text) => {
-                let color = text === 'Dừng' ? 'volcano' : 'green';
+                let color = text === false ? 'volcano' : 'green';
+                let name = text === false ? 'Dừng' : 'Hoạt động';
                 return (
                     <Tag color={color} key={text}>
-                        {text.toUpperCase()}
+                        {name.toUpperCase()}
                     </Tag>
                 );
             },
@@ -197,25 +202,19 @@ function User() {
         },
     ];
 
-    // Data table
-    const data = [
-        {
-            key: '1',
-            fullname: 'Trung Em',
-            email: 'trungem@gmail.com',
-            phone: '0912312311',
-            active: 'Hoạt động',
-            role: 'admin',
-        },
-        {
-            key: '2',
-            fullname: 'Nhật Đăng',
-            email: 'dang@gmail.com',
-            phone: '0912312314',
-            active: 'Dừng',
-            role: 'user',
-        },
-    ];
+    // Get list user
+    const fetchListUser = async () => {
+        setLoadingTable(true);
+        const listUser = await userService.getAllUser();
+        if (listUser && listUser.errCode === 0) {
+            setUsers(listUser.data);
+            setLoadingTable(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchListUser();
+    }, []);
 
     // Event table
     const onChangeTable = (pagination, filters, sorter, extra) => {
@@ -243,7 +242,15 @@ function User() {
                     </Space>
                 </div>
 
-                <Table columns={columns} dataSource={data} onChange={onChangeTable} />
+                <Table
+                    columns={columns}
+                    dataSource={users}
+                    loading={loadingTable}
+                    onChange={onChangeTable}
+                    pagination={{
+                        showSizeChanger: true,
+                    }}
+                />
 
                 <DetailUser show={openDetailUser} onClose={closeDetailUser} />
 

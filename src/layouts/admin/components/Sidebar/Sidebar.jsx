@@ -75,7 +75,14 @@ function Sidebar() {
     });
 
     return (
-        <Sider trigger={null} width={220} collapsible collapsed={app.isCollapsedSidebar} theme="light">
+        <Sider
+            trigger={null}
+            width={220}
+            collapsible
+            collapsed={app.isCollapsedSidebar}
+            theme="light"
+            style={{ overflow: 'auto', height: '100vh', position: 'fixed', left: 0, top: 0, bottom: 0 }}
+        >
             <div className={clsx(styles.logo)}>
                 <Space wrap size={16}>
                     <Avatar shape="square" size="default" src={images.logo} />

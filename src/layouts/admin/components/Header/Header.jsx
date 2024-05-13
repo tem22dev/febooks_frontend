@@ -62,7 +62,7 @@ function Header() {
                 <Dropdown menu={{ items }} trigger={['click']}>
                     <div className={clsx(styles.account)} onClick={(e) => e.preventDefault()}>
                         <Avatar shape="circle" size="default" src={images.logo} className={clsx(styles.avatar)} />
-                        <div className={clsx(styles.name)}>Admin</div>
+                        <div className={clsx(styles.name)}>Welcome {user?.fullname}</div>
                         <DownOutlined />
                     </div>
                 </Dropdown>
