@@ -23,6 +23,7 @@ function User() {
     const { Content } = Layout;
 
     const [openDetailUser, setOpenDetailUser] = useState(false);
+    const [dataDetailUser, setDataDetailUser] = useState({});
 
     const [formUpdateUser] = Form.useForm();
     const [openUpdateUser, setOpenUpdateUser] = useState(false);
@@ -79,7 +80,8 @@ function User() {
     };
 
     // Handle Detail user
-    const showDetailUser = () => {
+    const showDetailUser = (record) => {
+        setDataDetailUser(record);
         setOpenDetailUser(true);
     };
 
@@ -152,7 +154,9 @@ function User() {
                 compare: (a, b) => a.key - b.key,
             },
             sortDirections: ['descend'],
-            render: (text) => <a onClick={showDetailUser}>{text}</a>,
+            render: (text, record) => {
+                return <a onClick={() => showDetailUser(record)}>{text}</a>;
+            },
         },
         {
             title: 'Tên hiển thị',
@@ -289,7 +293,7 @@ function User() {
                     }}
                 />
 
-                <DetailUser show={openDetailUser} onClose={closeDetailUser} />
+                <DetailUser show={openDetailUser} onClose={closeDetailUser} data={dataDetailUser} />
 
                 <UpdateUser
                     open={openUpdateUser}

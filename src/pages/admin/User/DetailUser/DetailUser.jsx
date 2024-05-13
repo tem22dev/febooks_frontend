@@ -1,74 +1,75 @@
 import { Drawer, Badge, Descriptions, Tag } from 'antd';
+import moment from 'moment/moment';
 
-function DetailUser({ show, onClose }) {
+function DetailUser({ show, onClose, data }) {
     const items = [
         {
             key: '1',
             label: 'Id',
-            children: '1',
+            children: data?.key,
         },
         {
             key: '2',
             span: 2,
             label: 'Họ Tên',
-            children: 'Nguyễn Trung Em',
+            children: data?.fullname,
         },
         {
             key: '3',
             label: 'E-Mail',
-            children: 'bakhia@gmail.com',
+            children: data?.email,
         },
         {
             key: '4',
             label: 'Số điện thoại',
-            children: '0912312332',
+            children: data?.phone,
         },
         {
             key: '5',
             label: 'Giới Tính',
-            children: 'Nam',
+            children: data?.gender,
         },
         {
             key: '6',
             label: 'Trạng thái',
-            children: <Badge status="processing" text="Hoạt động" />,
+            children: data?.active ? (
+                <Badge status="processing" text="Hoạt động" />
+            ) : (
+                <Badge status="error" text="Dừng" />
+            ),
         },
         {
             key: '7',
             label: 'Vai trò',
             span: 2,
-            children: <Tag color="geekblue">{'Quản trị viên'.toUpperCase()}</Tag>,
+            children:
+                data?.role === 'admin' ? (
+                    <Tag color="geekblue">{'Quản trị viên'.toUpperCase()}</Tag>
+                ) : (
+                    <Tag color="green">{'Người dùng'.toUpperCase()}</Tag>
+                ),
         },
         {
             key: '8',
-            label: 'Order time',
-            children: '2018-04-24 18:00:00',
+            label: 'Tạo tại',
+            children: moment(data?.createdAt).format('DD-MM-YYYY hh:mm:ss'),
         },
         {
             key: '9',
-            label: 'Usage Time',
+            label: 'Cập nhật',
             span: 2,
-            children: '2019-04-24 18:00:00',
+            children: moment(data?.updatedAt).format('DD-MM-YYYY hh:mm:ss'),
         },
         {
             key: '10',
             label: 'Ảnh đại diện',
-            children: 'Ảnh đại diện',
+            children: data?.avatar,
         },
         {
             key: '11',
             label: 'Địa chỉ',
             span: 2,
-            children: (
-                <>
-                    Data disk type: MongoDB
-                    <br />
-                    Database version: 3.4
-                    <br />
-                    Package: dds.mongo.mid
-                    <br />
-                </>
-            ),
+            children: data?.address,
         },
     ];
 
