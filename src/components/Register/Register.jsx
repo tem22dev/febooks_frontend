@@ -22,10 +22,10 @@ function Register({ setKey, login }) {
             if (!!result && result.errCode === 0) {
                 // navigate('/');
                 setKey(login);
-                message.success(result.message, 3);
+                message.success(result.message, 2);
                 setTimeout(() => {
-                    message.info('Tiến hành đăng nhập để vào hệ thống!', 10);
-                }, 3000);
+                    message.info('Tiến hành đăng nhập để vào hệ thống!', 5);
+                }, 2000);
             } else if (result.errCode !== 0) {
                 notification.error({
                     message: 'Có lỗi xảy ra.',

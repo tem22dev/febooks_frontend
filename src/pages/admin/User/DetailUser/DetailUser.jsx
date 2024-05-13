@@ -1,5 +1,7 @@
-import { Drawer, Badge, Descriptions, Tag } from 'antd';
+import { Drawer, Badge, Descriptions, Tag, Avatar } from 'antd';
 import moment from 'moment/moment';
+
+const ENV = import.meta.env;
 
 function DetailUser({ show, onClose, data }) {
     const items = [
@@ -63,7 +65,13 @@ function DetailUser({ show, onClose, data }) {
         {
             key: '10',
             label: 'Ảnh đại diện',
-            children: data?.avatar,
+            children: (
+                <Avatar
+                    shape="square"
+                    size="large"
+                    src={`${ENV.VITE_BASE_URL_BACKEND}/images/accounts/${data?.avatar}`}
+                />
+            ),
         },
         {
             key: '11',

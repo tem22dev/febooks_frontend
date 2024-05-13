@@ -1,58 +1,157 @@
-import { useState } from 'react';
-import { Tag, Modal, Col, Form, Input, Row, Select, Upload, Image } from 'antd';
-import { PlusOutlined, UserOutlined, LockOutlined, MailOutlined, PhoneOutlined } from '@ant-design/icons';
+import { useEffect, useState } from 'react';
+import {
+    Col,
+    Divider,
+    Form,
+    Input,
+    Image,
+    InputNumber,
+    message,
+    Modal,
+    notification,
+    Row,
+    Select,
+    Upload,
+    Tag,
+} from 'antd';
+import {
+    PlusOutlined,
+    UserOutlined,
+    LockOutlined,
+    MailOutlined,
+    PhoneOutlined,
+    LoadingOutlined,
+} from '@ant-design/icons';
 
-function AddUser({ open, form, handleCancel, handleOk, confirmLoading }) {
+import * as userService from '../../../../services/userService';
+
+function AddUser(props) {
+    const { openModalCreate, setOpenModalCreate } = props;
+    const [isSubmit, setIsSubmit] = useState(false);
+
+    const [form] = Form.useForm();
+
+    const [loading, setLoading] = useState(false);
+
+    const [imageUrl, setImageUrl] = useState('');
+
+    const [dataAvatar, setDataAvatar] = useState([]);
+
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
-    const [fileList, setFileList] = useState([]);
+    const [previewTitle, setPreviewTitle] = useState('');
 
-    // Handle upload img
-    const getBase64 = (file) =>
-        new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = (error) => reject(error);
+    const onFinish = async (values) => {
+        const { fullname, password, email, phone, active, address, gender, role } = values;
+        setIsSubmit(true);
+        const res = await userService.createUser({
+            fullname,
+            password,
+            email,
+            phone,
+            active,
+            address,
+            gender,
+            role,
+            avatar: dataAvatar[0]?.name,
         });
-
-    const handlePreview = async (file) => {
-        if (!file.url && !file.preview) {
-            file.preview = await getBase64(file.originFileObj);
+        if (res && res.errCode === 0) {
+            message.success('Tạo mới người dùng thành công');
+            form.resetFields();
+            setOpenModalCreate(false);
+            await props.fetchListUser();
+        } else {
+            notification.error({
+                message: 'Đã có lỗi xảy ra',
+                description: res.errMessage,
+            });
         }
-
-        setPreviewImage(file.url || file.preview);
-        setPreviewOpen(true);
+        setIsSubmit(false);
     };
 
-    const handleChangeAvatar = ({ fileList: newFileList }) => setFileList(newFileList);
+    const getBase64 = (img, callback) => {
+        const reader = new FileReader();
+        reader.addEventListener('load', () => callback(reader.result));
+        reader.readAsDataURL(img);
+    };
 
-    const uploadButton = (
-        <button style={{ border: 0, background: 'none' }} type="button">
-            <PlusOutlined />
-            <div style={{ marginTop: 8 }}>Upload</div>
-        </button>
-    );
+    const beforeUpload = (file) => {
+        const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+        if (!isJpgOrPng) {
+            message.error('Bạn chỉ có thể tải lên tệp JPG/PNG!');
+        }
+        const isLt2M = file.size / 1024 / 1024 < 2;
+        if (!isLt2M) {
+            message.error('Hình ảnh phải nhỏ hơn 2MB!');
+        }
+        return isJpgOrPng && isLt2M;
+    };
 
-    const handleChangeGender = (value) => {
-        console.log(`selected ${value}`);
+    const handleChange = (info, type) => {
+        if (info.file.status === 'uploading') {
+            type ? true : setLoading(true);
+            return;
+        }
+        if (info.file.status === 'done') {
+            // Get this url from response in real world.
+            getBase64(info.file.originFileObj, (url) => {
+                type ? false : setLoading(false);
+                setImageUrl(url);
+            });
+        }
+    };
+
+    const handleUploadFileAvatar = async ({ file, onSuccess, onError }) => {
+        const res = await userService.uploadAvatarImg(file);
+        if (res && res.file) {
+            setDataAvatar([
+                {
+                    name: res.file.filename,
+                    uid: file.uid,
+                },
+            ]);
+            onSuccess('ok');
+        } else {
+            onError('Đã có lỗi khi tải ảnh lên');
+        }
+    };
+
+    const handleRemoveFile = (file, type) => {
+        if (type === 'avatar') {
+            setDataAvatar([]);
+        }
+    };
+
+    const handlePreview = async (file) => {
+        getBase64(file.originFileObj, (url) => {
+            setPreviewImage(url);
+            setPreviewOpen(true);
+            setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
+        });
     };
 
     return (
         <Modal
             title="Thêm người dùng"
-            open={open}
-            onOk={handleOk}
+            open={openModalCreate}
+            onOk={() => {
+                form.submit();
+            }}
             okButtonProps={{ icon: <PlusOutlined /> }}
             okText="Thêm"
-            confirmLoading={confirmLoading}
-            onCancel={handleCancel}
+            confirmLoading={isSubmit}
+            onCancel={() => {
+                form.resetFields();
+                setIsSubmit(false);
+                setOpenModalCreate(false);
+            }}
             cancelText="Huỷ bỏ"
             maskClosable={false}
             centered={true}
             width={680}
         >
-            <Form form={form} layout="vertical" name="add-user">
+            <Divider />
+            <Form form={form} layout="vertical" name="add-user" onFinish={onFinish}>
                 <Row gutter={16}>
                     <Col span={12}>
                         <Form.Item
@@ -105,14 +204,13 @@ function AddUser({ open, form, handleCancel, handleOk, confirmLoading }) {
                         </Form.Item>
                     </Col>
                     <Col span={12}>
-                        <Form.Item name="gender" label="Giới tính" hasFeedback initialValue="1">
+                        <Form.Item name="gender" label="Giới tính" hasFeedback initialValue="">
                             <Select
                                 style={{ width: 120 }}
-                                // onChange={handleChangeGender}
                                 options={[
-                                    { value: '1', label: '--Giới tính--' },
-                                    { value: 'male', label: 'Nam' },
-                                    { value: 'female', label: 'Nữ' },
+                                    { value: '', label: '--Giới tính--' },
+                                    { value: 'Nam', label: 'Nam' },
+                                    { value: 'Nữ', label: 'Nữ' },
                                 ]}
                             />
                         </Form.Item>
@@ -177,7 +275,6 @@ function AddUser({ open, form, handleCancel, handleOk, confirmLoading }) {
                             <Select
                                 style={{ width: 120 }}
                                 name="role"
-                                // onChange={handleChangeGender}
                                 options={[
                                     { value: 'user', label: <Tag color="green">Người dùng</Tag> },
                                     { value: 'admin', label: <Tag color="magenta">Quản trị viên</Tag> },
@@ -191,15 +288,14 @@ function AddUser({ open, form, handleCancel, handleOk, confirmLoading }) {
                             label="Trạng thái"
                             rules={[{ required: true }]}
                             hasFeedback
-                            initialValue="1"
+                            initialValue={1}
                         >
                             <Select
                                 style={{ width: 120 }}
                                 name="active"
-                                // onChange={handleChangeGender}
                                 options={[
-                                    { value: '1', label: <Tag color="blue">Hoạt động</Tag> },
-                                    { value: '0', label: <Tag color="red">Dừng</Tag> },
+                                    { value: 1, label: <Tag color="blue">Hoạt động</Tag> },
+                                    { value: 0, label: <Tag color="red">Dừng</Tag> },
                                 ]}
                             />
                         </Form.Item>
@@ -212,17 +308,23 @@ function AddUser({ open, form, handleCancel, handleOk, confirmLoading }) {
                         </Form.Item>
                     </Col>
                     <Col span={12}>
-                        <Form.Item name="avatar" label="Ảnh đại diện">
+                        <Form.Item name="avatar" label="Ảnh đại diện" valuePropName="checked">
                             <>
                                 <Upload
+                                    name="avatar"
                                     listType="picture-card"
-                                    fileList={fileList}
-                                    onPreview={handlePreview}
-                                    onChange={handleChangeAvatar}
                                     maxCount={1}
                                     multiple={false}
+                                    customRequest={handleUploadFileAvatar}
+                                    beforeUpload={beforeUpload}
+                                    onChange={handleChange}
+                                    onRemove={(file) => handleRemoveFile(file, 'avatar')}
+                                    onPreview={handlePreview}
                                 >
-                                    {fileList.length >= 1 ? null : uploadButton}
+                                    <div>
+                                        {loading ? <LoadingOutlined /> : <PlusOutlined />}
+                                        <div style={{ marginTop: 8 }}>Upload</div>
+                                    </div>
                                 </Upload>
                             </>
                         </Form.Item>

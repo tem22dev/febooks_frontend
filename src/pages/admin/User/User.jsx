@@ -29,9 +29,7 @@ function User() {
     const [openUpdateUser, setOpenUpdateUser] = useState(false);
     const [confirmLoadingUpdateUser, setConfirmLoadingUpdateUser] = useState(false);
 
-    const [formAddUser] = Form.useForm();
     const [openAddUser, setOpenAddUser] = useState(false);
-    const [confirmLoadingAddUser, setConfirmLoadingAddUser] = useState(false);
 
     const [openImportUser, setOpenImportUser] = useState(false);
     const [confirmLoadingImportUser, setConfirmLoadingImportUser] = useState(false);
@@ -108,25 +106,6 @@ function User() {
         }, 1500);
     };
 
-    // Handle add user
-    const showModalAddUser = () => {
-        setOpenAddUser(true);
-    };
-
-    const handleCancelAddUser = () => {
-        formAddUser.resetFields();
-        console.log('Clicked cancel button');
-        setOpenAddUser(false);
-    };
-
-    const handleOkAddUser = () => {
-        setConfirmLoadingAddUser(true);
-        setTimeout(() => {
-            setOpenAddUser(false);
-            setConfirmLoadingAddUser(false);
-        }, 1500);
-    };
-
     // Handle import user
     const showModalImportUser = () => {
         setOpenImportUser(true);
@@ -153,7 +132,8 @@ function User() {
             sorter: {
                 compare: (a, b) => a.key - b.key,
             },
-            sortDirections: ['descend'],
+            sortDirections: ['descend', 'ascend'],
+            defaultSortOrder: 'descend',
             render: (text, record) => {
                 return <a onClick={() => showDetailUser(record)}>{text}</a>;
             },
@@ -276,7 +256,7 @@ function User() {
                         <Button type="primary" icon={<CloudDownloadOutlined />} onClick={showModalImportUser}>
                             Import
                         </Button>
-                        <Button type="primary" icon={<PlusCircleOutlined />} onClick={showModalAddUser}>
+                        <Button type="primary" icon={<PlusCircleOutlined />} onClick={() => setOpenAddUser(true)}>
                             Thêm mới
                         </Button>
                         <Button type="text" icon={<ReloadOutlined />} onClick={fetchListUser} />
@@ -290,6 +270,11 @@ function User() {
                     onChange={onChangeTable}
                     pagination={{
                         showSizeChanger: true,
+                        showTotal: (total, range) => (
+                            <div>
+                                {range[0]}-{range[1]} trên {total} dòng
+                            </div>
+                        ),
                     }}
                 />
 
@@ -304,11 +289,9 @@ function User() {
                 />
 
                 <AddUser
-                    open={openAddUser}
-                    form={formAddUser}
-                    handleCancel={handleCancelAddUser}
-                    handleOk={handleOkAddUser}
-                    confirmLoading={confirmLoadingAddUser}
+                    openModalCreate={openAddUser}
+                    setOpenModalCreate={setOpenAddUser}
+                    fetchListUser={fetchListUser}
                 />
 
                 <ImportUser

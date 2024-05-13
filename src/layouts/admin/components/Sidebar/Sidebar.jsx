@@ -8,6 +8,8 @@ import styles from './Sidebar.module.scss';
 import images from '../../../../assets/images';
 import { Link } from 'react-router-dom';
 
+const ENV = import.meta.env;
+
 function Sidebar() {
     const { Sider } = Layout;
     const app = useSelector((state) => state.app);
@@ -85,7 +87,11 @@ function Sidebar() {
         >
             <div className={clsx(styles.logo)}>
                 <Space wrap size={16}>
-                    <Avatar shape="square" size="default" src={images.logo} />
+                    <Avatar
+                        shape="square"
+                        size="default"
+                        src={`${ENV.VITE_BASE_URL_BACKEND}/images/accounts/febooks.png`}
+                    />
                 </Space>
                 {app.isCollapsedSidebar || <p className={styles.heading}>Febooks Admin</p>}
             </div>

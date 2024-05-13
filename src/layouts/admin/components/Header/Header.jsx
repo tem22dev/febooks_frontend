@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button, Layout, Avatar, Space, Dropdown, theme, message } from 'antd';
 import { MenuFoldOutlined, MenuUnfoldOutlined, DownOutlined } from '@ant-design/icons';
 import clsx from 'clsx';
+import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router';
 
 import styles from './Header.module.scss';
@@ -9,6 +10,8 @@ import images from '../../../../assets/images';
 import { toggleSidebar } from '../../../../redux/app/appSlice';
 import { callLogout } from '../../../../services/authServices';
 import { doLogoutAction } from '../../../../redux/account/accountSlice';
+
+const ENV = import.meta.env;
 
 function Header() {
     const { Header } = Layout;
@@ -25,6 +28,14 @@ function Header() {
         {
             label: <label style={{ cursor: 'pointer' }}>Quản lý tài khoản</label>,
             key: 'account',
+        },
+        {
+            label: (
+                <Link to="/" style={{ cursor: 'pointer' }}>
+                    Trang chủ
+                </Link>
+            ),
+            key: 'home',
         },
         {
             label: (
@@ -61,8 +72,13 @@ function Header() {
             <Space size={16} className={clsx(styles.wrapper)}>
                 <Dropdown menu={{ items }} trigger={['click']}>
                     <div className={clsx(styles.account)} onClick={(e) => e.preventDefault()}>
-                        <Avatar shape="circle" size="default" src={images.logo} className={clsx(styles.avatar)} />
-                        <div className={clsx(styles.name)}>Welcome {user?.fullname}</div>
+                        <Avatar
+                            shape="circle"
+                            size="default"
+                            src={`${ENV.VITE_BASE_URL_BACKEND}/images/accounts/${user.avatar}`}
+                            className={clsx(styles.avatar)}
+                        />
+                        <div className={clsx(styles.name)}>{user?.fullname}</div>
                         <DownOutlined />
                     </div>
                 </Dropdown>

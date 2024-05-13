@@ -7,12 +7,14 @@ import { IoSearchOutline } from 'react-icons/io5';
 import { Divider, Badge, Drawer, Input } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { DownOutlined } from '@ant-design/icons';
-import { Dropdown, Space, message } from 'antd';
+import { Dropdown, Space, message, Avatar } from 'antd';
 import { useNavigate } from 'react-router';
 
 import styles from './Header.module.scss';
 import { callLogout } from '../../../services/authServices';
 import { doLogoutAction } from '../../../redux/account/accountSlice';
+
+const ENV = import.meta.env;
 
 function Header() {
     const [openDrawer, setOpenDrawer] = useState(false);
@@ -32,7 +34,7 @@ function Header() {
         }
     };
 
-    const items = [
+    let items = [
         {
             label: <label style={{ cursor: 'pointer' }}>Quản lý tài khoản</label>,
             key: 'account',
@@ -46,6 +48,17 @@ function Header() {
             key: 'logout',
         },
     ];
+
+    if (user?.role === 'admin') {
+        items.unshift({
+            label: (
+                <Link to="admin/dash" style={{ cursor: 'pointer' }}>
+                    Trang quản trị
+                </Link>
+            ),
+            key: 'admin',
+        });
+    }
     return (
         <>
             <div className={clsx(styles.container)}>
@@ -91,7 +104,13 @@ function Header() {
                                     <Dropdown menu={{ items }} trigger={['click']}>
                                         <a onClick={(e) => e.preventDefault()}>
                                             <Space>
-                                                Welcome {user?.fullname}
+                                                <Avatar
+                                                    shape="circle"
+                                                    size="default"
+                                                    src={`${ENV.VITE_BASE_URL_BACKEND}/images/accounts/${user.avatar}`}
+                                                    className={clsx(styles.avatar)}
+                                                />
+                                                {user?.fullname}
                                                 <DownOutlined />
                                             </Space>
                                         </a>
