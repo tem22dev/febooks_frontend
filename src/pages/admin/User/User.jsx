@@ -32,27 +32,16 @@ function User() {
     const [openAddUser, setOpenAddUser] = useState(false);
 
     const [openImportUser, setOpenImportUser] = useState(false);
-    const [confirmLoadingImportUser, setConfirmLoadingImportUser] = useState(false);
 
     const [users, setUsers] = useState([]);
     const [loadingTable, setLoadingTable] = useState(false);
 
     // Map data
     const handleMapDataUser = (data) => {
-        const listUser = data.map((user) => ({
-            key: user.id,
-            fullname: user.fullname,
-            email: user.email,
-            phone: user.phone,
-            gender: user.gender,
-            address: user.address,
-            active: user.active,
-            role: user.role,
-            avatar: user.avatar,
-            createdAt: user.createdAt,
-            updatedAt: user.updatedAt,
-        }));
-        return listUser;
+        return data.map((user) => {
+            const { id: key, ...rest } = user;
+            return { key, ...rest };
+        });
     };
 
     // Event search
@@ -103,24 +92,6 @@ function User() {
         setTimeout(() => {
             setOpenUpdateUser(false);
             setConfirmLoadingUpdateUser(false);
-        }, 1500);
-    };
-
-    // Handle import user
-    const showModalImportUser = () => {
-        setOpenImportUser(true);
-    };
-
-    const handleCancelImportUser = () => {
-        console.log('Clicked cancel button');
-        setOpenImportUser(false);
-    };
-
-    const handleOkImportUser = () => {
-        setConfirmLoadingImportUser(true);
-        setTimeout(() => {
-            setOpenImportUser(false);
-            setConfirmLoadingImportUser(false);
         }, 1500);
     };
 
@@ -253,7 +224,7 @@ function User() {
                         <Button type="primary" icon={<LogoutOutlined />}>
                             Export
                         </Button>
-                        <Button type="primary" icon={<CloudDownloadOutlined />} onClick={showModalImportUser}>
+                        <Button type="primary" icon={<CloudDownloadOutlined />} onClick={() => setOpenImportUser(true)}>
                             Import
                         </Button>
                         <Button type="primary" icon={<PlusCircleOutlined />} onClick={() => setOpenAddUser(true)}>
@@ -295,10 +266,9 @@ function User() {
                 />
 
                 <ImportUser
-                    open={openImportUser}
-                    handleCancel={handleCancelImportUser}
-                    handleOk={handleOkImportUser}
-                    confirmLoading={confirmLoadingImportUser}
+                    openImportUser={openImportUser}
+                    setOpenImportUser={setOpenImportUser}
+                    fetchListUser={fetchListUser}
                 />
             </div>
         </Content>

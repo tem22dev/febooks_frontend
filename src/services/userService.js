@@ -46,3 +46,12 @@ export const uploadAvatarImg = async (file) => {
         throw error.response.data;
     }
 };
+
+export const importUser = async (data) => {
+    try {
+        const res = await request.post('users/import/bulk-create', data);
+        return res;
+    } catch (error) {
+        throw error.response.data;
+    }
+};
