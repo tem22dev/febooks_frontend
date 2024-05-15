@@ -58,8 +58,16 @@ export const importUser = async (data) => {
 
 export const updateUser = async (data) => {
     try {
-        console.log(data);
-        const res = await request.post('users/update', data);
+        const res = await request.put('users/update', data);
+        return res;
+    } catch (error) {
+        throw error.response.data;
+    }
+};
+
+export const deleteUser = async (id) => {
+    try {
+        const res = await request.delete(`users/delete/${id}`);
         return res;
     } catch (error) {
         throw error.response.data;

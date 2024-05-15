@@ -10,7 +10,9 @@ import {
     EditOutlined,
     QuestionCircleOutlined,
 } from '@ant-design/icons';
-import { Layout, Button, Form, Space, Table, Tag, Popconfirm, message } from 'antd';
+import { Layout, Button, Form, Space, Table, Tag, Popconfirm, message, notification } from 'antd';
+import { RiDeleteBin5Fill } from 'react-icons/ri';
+import { FaEdit } from 'react-icons/fa';
 
 import SearchUser from './SearchUser';
 import DetailUser from './DetailUser';
@@ -77,6 +79,20 @@ function User() {
         setOpenDetailUser(false);
     };
 
+    // Handle delete user
+    const handleDeleteUser = async (id) => {
+        const res = await userService.deleteUser(id);
+        if (res && res.errCode === 0) {
+            message.success(res.message);
+            fetchListUser();
+        } else {
+            notification.error({
+                message: 'Có lỗi xảy ra',
+                description: res.errMessage,
+            });
+        }
+    };
+
     // Columns table
     const columns = [
         {
@@ -140,7 +156,7 @@ function User() {
                 multiple: 1,
             },
             render: (text) => {
-                let color = text === 'admin' ? 'geekblue' : 'green';
+                let color = text === 'admin' ? 'red' : 'blue';
                 let name = text === 'admin' ? 'Quản trị viên' : 'Người dùng';
                 return (
                     <Tag color={color} key={text}>
@@ -155,14 +171,15 @@ function User() {
             render: (_, record) => (
                 <Space>
                     <Tag
-                        color="warning"
+                        color="#2db7f5"
                         style={{ cursor: 'pointer' }}
                         onClick={() => {
                             setOpenUpdateUser(true);
                             setDataUpdate(record);
                         }}
                     >
-                        <EditOutlined />
+                        {/* <EditOutlined /> */}
+                        <FaEdit />
                     </Tag>
                     <Popconfirm
                         placement="topLeft"
@@ -170,10 +187,12 @@ function User() {
                         description="Bạn có chắc chắn muốn xoá user này ?"
                         okText="Xác nhận"
                         cancelText="Huỷ"
+                        onConfirm={() => handleDeleteUser(record.id)}
                         icon={<QuestionCircleOutlined style={{ color: 'red', cursor: 'pointer' }} />}
                     >
-                        <Tag color="error" style={{ cursor: 'pointer' }}>
-                            <DeleteOutlined />
+                        <Tag color="#f50" style={{ cursor: 'pointer' }}>
+                            {/* <DeleteOutlined /> */}
+                            <RiDeleteBin5Fill />
                         </Tag>
                     </Popconfirm>
                 </Space>
