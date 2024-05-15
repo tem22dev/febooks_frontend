@@ -4,6 +4,7 @@ import * as XLSX from 'xlsx';
 import { useState } from 'react';
 
 import * as userService from '../../../../services/userService';
+import templateFile from '../../../../assets/uploads/template.xlsx?url';
 
 function ImportUser(props) {
     const { openImportUser, setOpenImportUser } = props;
@@ -56,12 +57,13 @@ function ImportUser(props) {
     };
 
     const handleSubmit = async () => {
+        setIsLoading(true);
         const data = dataExcel.map((item) => {
             item.password = '123456';
             return item;
         });
         const res = await userService.importUser(data);
-        console.log(res);
+
         if (res && res.errCode === 0) {
             notification.success({
                 message: 'Tải lên thành công',
@@ -76,6 +78,7 @@ function ImportUser(props) {
                 description: `Số điện thoại hoặc email đã tồn tại trên hệ thống ở dòng ${res.errMessage.join(', ')}`,
             });
         }
+        setIsLoading(false);
     };
 
     return (
@@ -88,7 +91,7 @@ function ImportUser(props) {
                 disabled: dataExcel.length < 1,
             }}
             okText="Nhập dữ liệu"
-            // confirmLoading={isLoading}
+            confirmLoading={isLoading}
             onCancel={() => {
                 setOpenImportUser(false);
                 setDataExcel([]);
@@ -103,7 +106,12 @@ function ImportUser(props) {
                     <InboxOutlined />
                 </p>
                 <p className="ant-upload-text">Nhấp hoặc kéo tệp vào khu vực này để tải lên</p>
-                <p className="ant-upload-hint">Hỗ trợ tải lên một lần. Chỉ chấp nhận .csv, .xls, .xlsx</p>
+                <p className="ant-upload-hint">
+                    Hỗ trợ tải lên một lần. Chỉ chấp nhận .csv, .xls, .xlsx, hoặc &nbsp;{' '}
+                    <a onClick={(e) => e.stopPropagation()} href={templateFile} download>
+                        Tải file mẫu tại đây
+                    </a>
+                </p>
             </Dragger>
             <div style={{ paddingTop: 20 }}>
                 <Table

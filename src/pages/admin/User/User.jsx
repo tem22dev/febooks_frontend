@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import clsx from 'clsx';
+import * as XLSX from 'xlsx';
 import {
     LogoutOutlined,
     CloudDownloadOutlined,
@@ -64,6 +65,16 @@ function User() {
         }
         const dataMap = handleMapDataUser(listUser.data);
         setUsers(dataMap);
+    };
+
+    // Handle export data user
+    const handleExportData = () => {
+        if (users.length > 0) {
+            const worksheet = XLSX.utils.json_to_sheet(users);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+            XLSX.writeFile(workbook, 'ExportUser.csv');
+        }
     };
 
     // Handle Detail user
@@ -221,7 +232,7 @@ function User() {
                 <div className={clsx(styles.heading_table)}>
                     <h1 className={clsx(styles.title_table)}>Danh sách tài khoản</h1>
                     <Space className={clsx(styles.wrapper_btn)}>
-                        <Button type="primary" icon={<LogoutOutlined />}>
+                        <Button type="primary" icon={<LogoutOutlined />} onClick={handleExportData}>
                             Export
                         </Button>
                         <Button type="primary" icon={<CloudDownloadOutlined />} onClick={() => setOpenImportUser(true)}>
