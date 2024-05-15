@@ -26,9 +26,8 @@ function User() {
     const [openDetailUser, setOpenDetailUser] = useState(false);
     const [dataDetailUser, setDataDetailUser] = useState({});
 
-    const [formUpdateUser] = Form.useForm();
     const [openUpdateUser, setOpenUpdateUser] = useState(false);
-    const [confirmLoadingUpdateUser, setConfirmLoadingUpdateUser] = useState(false);
+    const [dataUpdate, setDataUpdate] = useState({});
 
     const [openAddUser, setOpenAddUser] = useState(false);
 
@@ -37,15 +36,7 @@ function User() {
     const [users, setUsers] = useState([]);
     const [loadingTable, setLoadingTable] = useState(false);
 
-    // Map data
-    const handleMapDataUser = (data) => {
-        return data.map((user) => {
-            const { id: key, ...rest } = user;
-            return { key, ...rest };
-        });
-    };
-
-    // Event search
+    // Handle search user
     const onFinishSearch = async (values) => {
         const { fullname, email, phone } = values;
         let params = {};
@@ -63,8 +54,7 @@ function User() {
             message.info('Không tìm thấy người dùng', 3);
             return;
         }
-        const dataMap = handleMapDataUser(listUser.data);
-        setUsers(dataMap);
+        setUsers(listUser.data);
     };
 
     // Handle export data user
@@ -87,32 +77,13 @@ function User() {
         setOpenDetailUser(false);
     };
 
-    // Handle update user
-    const showModalUpdateUser = () => {
-        setOpenUpdateUser(true);
-    };
-
-    const handleCancelUpdateUser = () => {
-        formUpdateUser.resetFields();
-        console.log('Clicked cancel button');
-        setOpenUpdateUser(false);
-    };
-
-    const handleOkUpdateUser = () => {
-        setConfirmLoadingUpdateUser(true);
-        setTimeout(() => {
-            setOpenUpdateUser(false);
-            setConfirmLoadingUpdateUser(false);
-        }, 1500);
-    };
-
     // Columns table
     const columns = [
         {
             title: 'Id',
-            dataIndex: 'key',
+            dataIndex: 'id',
             sorter: {
-                compare: (a, b) => a.key - b.key,
+                compare: (a, b) => a.id - b.id,
             },
             sortDirections: ['descend', 'ascend'],
             defaultSortOrder: 'descend',
@@ -181,9 +152,16 @@ function User() {
         {
             title: 'Thao tác',
             dataIndex: 'action',
-            render: () => (
+            render: (_, record) => (
                 <Space>
-                    <Tag color="warning" style={{ cursor: 'pointer' }} onClick={showModalUpdateUser}>
+                    <Tag
+                        color="warning"
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => {
+                            setOpenUpdateUser(true);
+                            setDataUpdate(record);
+                        }}
+                    >
                         <EditOutlined />
                     </Tag>
                     <Popconfirm
@@ -209,8 +187,7 @@ function User() {
         const listUser = await userService.getAllUser();
 
         if (listUser && listUser.errCode === 0) {
-            const dataMap = handleMapDataUser(listUser.data);
-            setUsers(dataMap);
+            setUsers(listUser.data);
             setLoadingTable(false);
         }
     };
@@ -250,6 +227,7 @@ function User() {
                     dataSource={users}
                     loading={loadingTable}
                     onChange={onChangeTable}
+                    rowKey="id"
                     pagination={{
                         showSizeChanger: true,
                         showTotal: (total, range) => (
@@ -263,11 +241,11 @@ function User() {
                 <DetailUser show={openDetailUser} onClose={closeDetailUser} data={dataDetailUser} />
 
                 <UpdateUser
-                    open={openUpdateUser}
-                    form={formUpdateUser}
-                    handleCancel={handleCancelUpdateUser}
-                    handleOk={handleOkUpdateUser}
-                    confirmLoading={confirmLoadingUpdateUser}
+                    openModal={openUpdateUser}
+                    setOpenModel={setOpenUpdateUser}
+                    dataUpdate={dataUpdate}
+                    setDataUpdate={setDataUpdate}
+                    fetchListUser={fetchListUser}
                 />
 
                 <AddUser
