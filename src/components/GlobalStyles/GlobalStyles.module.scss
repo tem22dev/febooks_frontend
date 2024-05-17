@@ -4,7 +4,6 @@
     padding: 0;
     margin: 0;
     box-sizing: border-box;
-    user-select: none;
 }
 
 html {
@@ -15,6 +14,11 @@ body {
     font-size: 1.6rem;
     line-height: 1.5;
     text-rendering: optimizeSpeed; // Tối ưu text khi browser render text
+}
+
+::selection {
+    color: #fff;
+    background: #1677ff;
 }
 
 /* width: chiều rộng của thanh scroll*/

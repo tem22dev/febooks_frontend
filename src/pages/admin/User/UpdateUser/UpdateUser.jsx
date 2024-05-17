@@ -3,6 +3,7 @@ import { Tag, Modal, Col, Form, Input, Row, Select, Upload, Image, Switch, Divid
 import { PlusOutlined, SaveOutlined, LockOutlined, LoadingOutlined } from '@ant-design/icons';
 import { BiSolidLockOpen } from 'react-icons/bi';
 import { BiSolidLock } from 'react-icons/bi';
+import { v4 as uuidv4 } from 'uuid';
 
 import * as userService from '../../../../services/userService';
 
@@ -98,7 +99,7 @@ function UpdateUser(props) {
         if (dataUpdate?.id) {
             const arrAvatar = [
                 {
-                    uid: '-1',
+                    uid: uuidv4(),
                     name: dataUpdate.avatar,
                     status: 'done',
                     url: `${ENV.VITE_BASE_URL_BACKEND}/images/accounts/${dataUpdate.avatar}`,

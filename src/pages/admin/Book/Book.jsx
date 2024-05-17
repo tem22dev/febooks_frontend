@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import moment from 'moment';
 import {
@@ -6,11 +6,11 @@ import {
     CloudDownloadOutlined,
     PlusCircleOutlined,
     ReloadOutlined,
-    DeleteOutlined,
-    EditOutlined,
     QuestionCircleOutlined,
 } from '@ant-design/icons';
 import { Layout, Button, Form, Space, Table, Tag, Popconfirm } from 'antd';
+import { RiDeleteBin5Fill } from 'react-icons/ri';
+import { FaEdit } from 'react-icons/fa';
 
 import SearchBook from './SearchBook';
 import DetailBook from './DetailBook';
@@ -18,6 +18,7 @@ import UpdateBook from './UpdateBook';
 import AddBook from './AddBook';
 import ImportBook from './ImportBook';
 import styles from './Book.module.scss';
+import * as bookService from '../../../services/bookService';
 
 function Book() {
     const { Content } = Layout;
@@ -35,9 +36,51 @@ function Book() {
     const [openImportBook, setOpenImportBook] = useState(false);
     const [confirmLoadingImportBook, setConfirmLoadingImportBook] = useState(false);
 
-    // Event search
-    const onFinishSearch = (values) => {
-        console.log('Received values of form: ', values);
+    const [books, setBooks] = useState([]);
+    const [loadingTable, setLoadingTable] = useState(false);
+
+    // Map data
+    const flatBook = (listBook) => {
+        return listBook.map((item) => {
+            let obj = {
+                nameAuthor: item?.Author?.nameAuthor,
+                nameLanguage: item?.Language?.nameLanguage,
+                nameGenre: item?.Genre?.nameGenre,
+                namePublisher: item?.Publisher?.namePublisher,
+                nameSupplier: item?.Supplier?.nameSupplier,
+                ...item,
+            };
+            delete obj?.Author;
+            delete obj?.Genre;
+            delete obj?.Language;
+            delete obj?.Publisher;
+            delete obj?.Supplier;
+            return obj;
+        });
+    };
+
+    // Handle search book
+    const onFinishSearch = async (values) => {
+        const { title, nameAuthor, nameGenre } = values;
+        let params = {};
+        if (title) {
+            params = { title, ...params };
+        }
+        if (nameAuthor) {
+            params = { nameAuthor, ...params };
+        }
+        if (nameGenre) {
+            params = { nameGenre, ...params };
+        }
+
+        const listBook = await bookService.searchBook(params);
+        const flatBookList = flatBook(listBook.data);
+
+        if (flatBookList.length === 0) {
+            message.info('Không tìm thấy người dùng', 3);
+            return;
+        }
+        setBooks(flatBookList);
     };
 
     // Handle Detail book
@@ -109,39 +152,47 @@ function Book() {
     const columns = [
         {
             title: 'Id',
-            dataIndex: 'key',
+            dataIndex: 'id',
             sorter: {
-                compare: (a, b) => a.key - b.key,
+                compare: (a, b) => a.id - b.id,
             },
-            sortDirections: ['descend'],
+            sortDirections: ['descend', 'ascend'],
             render: (text) => <a onClick={showDetailBook}>{text}</a>,
         },
         {
             title: 'Tên hiển thị',
-            dataIndex: 'bookName',
+            width: 320,
+            dataIndex: 'title',
             sortDirections: ['descend', 'ascend'],
             sorter: {
-                compare: (a, b) => a.bookName.length - b.bookName.length,
+                compare: (a, b) => a.title.length - b.title.length,
                 multiple: 5,
             },
+            render: (text) => <p className={clsx(styles.hidden_long)}>{text}</p>,
+        },
+        {
+            title: 'Hình ảnh',
+            dataIndex: 'thumbnail',
         },
         {
             title: 'Thể loại',
-            dataIndex: 'cate',
+            dataIndex: 'nameGenre',
             sortDirections: ['descend', 'ascend'],
             sorter: {
-                compare: (a, b) => a.cate.length - b.cate.length,
+                compare: (a, b) => a.nameGenre.length - b.nameGenre.length,
                 multiple: 4,
             },
+            render: (text) => <p className={clsx(styles.hidden_long)}>{text}</p>,
         },
         {
             title: 'Tác giả',
-            dataIndex: 'author',
+            dataIndex: 'nameAuthor',
             sortDirections: ['descend', 'ascend'],
             sorter: {
-                compare: (a, b) => a.author.length - b.author.length,
+                compare: (a, b) => a.nameAuthor.length - b.nameAuthor.length,
                 multiple: 3,
             },
+            render: (text) => <p className={clsx(styles.hidden_long)}>{text}</p>,
         },
         {
             title: 'Giá tiền',
@@ -150,22 +201,25 @@ function Book() {
                 compare: (a, b) => a.price - b.price,
                 multiple: 2,
             },
+            render: (price) => `${new Intl.NumberFormat().format(price)} đ`,
         },
         {
             title: 'Ngày cập nhật',
-            dataIndex: 'updateAt',
+            dataIndex: 'updatedAt',
+            defaultSortOrder: 'descend',
             sorter: {
-                compare: (a, b) => moment(a.updateAt).unix() - moment(b.updateAt).unix(),
+                compare: (a, b) => moment(a.updatedAt).unix() - moment(b.updatedAt).unix(),
                 multiple: 1,
             },
+            render: (date) => moment(date).format('DD-MM-YYYY hh:mm:ss'),
         },
         {
             title: 'Thao tác',
             dataIndex: 'action',
             render: () => (
                 <Space>
-                    <Tag color="warning" style={{ cursor: 'pointer' }} onClick={showModalUpdateBook}>
-                        <EditOutlined />
+                    <Tag color="#2db7f5" style={{ cursor: 'pointer' }} onClick={showModalUpdateBook}>
+                        <FaEdit />
                     </Tag>
                     <Popconfirm
                         placement="topLeft"
@@ -175,8 +229,8 @@ function Book() {
                         cancelText="Huỷ"
                         icon={<QuestionCircleOutlined style={{ color: 'red', cursor: 'pointer' }} />}
                     >
-                        <Tag color="error" style={{ cursor: 'pointer' }}>
-                            <DeleteOutlined />
+                        <Tag color="#f50" style={{ cursor: 'pointer' }}>
+                            <RiDeleteBin5Fill />
                         </Tag>
                     </Popconfirm>
                 </Space>
@@ -184,33 +238,22 @@ function Book() {
         },
     ];
 
-    // Data table
-    const data = [
-        {
-            key: '1',
-            bookName: '7 Thói Quen Của Bạn Trẻ Thành Đạt',
-            cate: 'Tư duy',
-            author: 'Sean Covey',
-            price: 120000,
-            updateAt: '6-5-2024 1:30:00',
-        },
-        {
-            key: '2',
-            bookName: 'Tô Bình Yên Vẽ Hạnh Phúc (Tái Bản 2022)',
-            cate: 'Văn học',
-            author: 'Kulzsc',
-            price: 59000,
-            updateAt: '4-3-2024 1:30:00',
-        },
-        {
-            key: '3',
-            bookName: 'Liễu Phàm Tứ Huấn - Tích Tập Phúc Đức, Cải Tạo Vận Mênh (Tái Bản 2022)',
-            cate: 'LỊCH SỬ - ĐỊA LÝ',
-            author: 'Liễu Phàm',
-            price: 40000,
-            updateAt: '2-3-2024 1:30:00',
-        },
-    ];
+    // Get list books
+    const fetchListBook = async () => {
+        setLoadingTable(true);
+        const listBook = await bookService.getAllBook();
+
+        const flatBookList = flatBook(listBook.data);
+
+        if (listBook && listBook.errCode === 0) {
+            setBooks(flatBookList);
+            setLoadingTable(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchListBook();
+    }, []);
 
     // Event table
     const onChangeTable = (pagination, filters, sorter, extra) => {
@@ -234,11 +277,25 @@ function Book() {
                         <Button type="primary" icon={<PlusCircleOutlined />} onClick={showModalAddBook}>
                             Thêm mới
                         </Button>
-                        <Button type="text" icon={<ReloadOutlined />} />
+                        <Button type="text" icon={<ReloadOutlined />} onClick={fetchListBook} />
                     </Space>
                 </div>
 
-                <Table columns={columns} dataSource={data} onChange={onChangeTable} />
+                <Table
+                    columns={columns}
+                    rowKey="id"
+                    dataSource={books}
+                    loading={loadingTable}
+                    onChange={onChangeTable}
+                    pagination={{
+                        showSizeChanger: true,
+                        showTotal: (total, range) => (
+                            <div>
+                                {range[0]}-{range[1]} trên {total} dòng
+                            </div>
+                        ),
+                    }}
+                />
 
                 <DetailBook show={openDetailBook} onClose={closeDetailBook} />
 
