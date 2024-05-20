@@ -12,6 +12,7 @@ import BookDetail from '../pages/BookDetail';
 
 import Dashboard from '../pages/Admin/Dashboard';
 import Book from '../pages/Admin/Book';
+import AddBook from '../pages/Admin/Book/AddBook';
 import User from '../pages/Admin/User';
 import Order from '../pages/Admin/Order';
 // import Login from '../pages/Admin/Login';
@@ -25,10 +26,11 @@ const publicRoutes = [
     // { path: config.routes.dashAuth, component: Login, layout: NoLayout },
 ];
 
-// Public routes
+// Private routes
 const privateRoutes = [
     { path: config.routes.dash, component: Dashboard },
     { path: config.routes.book, component: Book },
+    { path: config.routes.addBook, component: AddBook },
     { path: config.routes.user, component: User },
     { path: config.routes.order, component: Order },
 ];

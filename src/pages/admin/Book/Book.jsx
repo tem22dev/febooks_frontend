@@ -8,36 +8,40 @@ import {
     ReloadOutlined,
     QuestionCircleOutlined,
 } from '@ant-design/icons';
-import { Layout, Button, Form, Space, Table, Tag, Popconfirm } from 'antd';
+import { Layout, Button, Form, Space, Table, Tag, Popconfirm, Modal, Upload, Image } from 'antd';
 import { RiDeleteBin5Fill } from 'react-icons/ri';
 import { FaEdit } from 'react-icons/fa';
+import { v4 as uuidv4 } from 'uuid';
 
 import SearchBook from './SearchBook';
 import DetailBook from './DetailBook';
 import UpdateBook from './UpdateBook';
-import AddBook from './AddBook';
 import ImportBook from './ImportBook';
 import styles from './Book.module.scss';
 import * as bookService from '../../../services/bookService';
+import { Link } from 'react-router-dom';
+
+const ENV = import.meta.env;
 
 function Book() {
     const { Content } = Layout;
 
-    const [openDetailBook, setOpenDetailBBook] = useState(false);
+    const [openDetailBook, setOpenDetailBook] = useState(false);
+    const [dataDetailBook, setDataDetailBook] = useState(null);
 
     const [formUpdateBook] = Form.useForm();
     const [openUpdateBook, setOpenUpdateBook] = useState(false);
     const [confirmLoadingUpdateBook, setConfirmLoadingUpdateBook] = useState(false);
-
-    const [formAddBook] = Form.useForm();
-    const [openAddBook, setOpenAddBook] = useState(false);
-    const [confirmLoadingAddBook, setConfirmLoadingAddBook] = useState(false);
 
     const [openImportBook, setOpenImportBook] = useState(false);
     const [confirmLoadingImportBook, setConfirmLoadingImportBook] = useState(false);
 
     const [books, setBooks] = useState([]);
     const [loadingTable, setLoadingTable] = useState(false);
+
+    const [previewOpen, setPreviewOpen] = useState(false);
+    const [previewImage, setPreviewImage] = useState('');
+    const [previewTitle, setPreviewTitle] = useState('');
 
     // Map data
     const flatBook = (listBook) => {
@@ -77,19 +81,16 @@ function Book() {
         const flatBookList = flatBook(listBook.data);
 
         if (flatBookList.length === 0) {
-            message.info('Không tìm thấy người dùng', 3);
+            message.info('Không tìm thấy sách', 3);
             return;
         }
         setBooks(flatBookList);
     };
 
-    // Handle Detail book
-    const showDetailBook = () => {
-        setOpenDetailBBook(true);
-    };
-
-    const closeDetailBook = () => {
-        setOpenDetailBBook(false);
+    // Handle show detail book
+    const showDetailBook = (record) => {
+        setOpenDetailBook(true);
+        setDataDetailBook(record);
     };
 
     // Handle update book
@@ -111,25 +112,6 @@ function Book() {
         }, 1500);
     };
 
-    // Handle add book
-    const showModalAddBook = () => {
-        setOpenAddBook(true);
-    };
-
-    const handleCancelAddBook = () => {
-        formAddBook.resetFields();
-        console.log('Clicked cancel button');
-        setOpenAddBook(false);
-    };
-
-    const handleOkAddBook = () => {
-        setConfirmLoadingAddBook(true);
-        setTimeout(() => {
-            setOpenAddBook(false);
-            setConfirmLoadingAddBook(false);
-        }, 1500);
-    };
-
     // Handle import book
     const showModalImportBook = () => {
         setOpenImportBook(true);
@@ -148,6 +130,31 @@ function Book() {
         }, 1500);
     };
 
+    const getBase64 = (file) =>
+        new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = (error) => reject(error);
+        });
+
+    const handleCancel = () => setPreviewOpen(false);
+
+    const handlePreview = async (file) => {
+        if (!file.url && !file.preview) {
+            file.preview = await getBase64(file.originFileObj);
+        }
+        setPreviewImage(file.url || file.preview);
+        setPreviewOpen(true);
+        setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
+    };
+
+    const handleChange = ({ fileList: newFileList }, bookId) => {
+        setBooks((prevBooks) =>
+            prevBooks.map((book) => (book.id === bookId ? { ...book, fileList: newFileList } : book)),
+        );
+    };
+
     // Columns table
     const columns = [
         {
@@ -157,7 +164,7 @@ function Book() {
                 compare: (a, b) => a.id - b.id,
             },
             sortDirections: ['descend', 'ascend'],
-            render: (text) => <a onClick={showDetailBook}>{text}</a>,
+            render: (text, record) => <a onClick={() => showDetailBook(record)}>{text}</a>,
         },
         {
             title: 'Tên hiển thị',
@@ -173,6 +180,15 @@ function Book() {
         {
             title: 'Hình ảnh',
             dataIndex: 'thumbnail',
+            render: (text, record) => (
+                <div className={clsx(styles.review_book)}>
+                    <Image
+                        width={50}
+                        height={50}
+                        src={`${ENV.VITE_BASE_URL_BACKEND}/images/books/${record.thumbnail}`}
+                    />
+                </div>
+            ),
         },
         {
             title: 'Thể loại',
@@ -274,8 +290,8 @@ function Book() {
                         <Button type="primary" icon={<CloudDownloadOutlined />} onClick={showModalImportBook}>
                             Import
                         </Button>
-                        <Button type="primary" icon={<PlusCircleOutlined />} onClick={showModalAddBook}>
-                            Thêm mới
+                        <Button type="primary" icon={<PlusCircleOutlined />}>
+                            <Link to="add">Thêm mới</Link>
                         </Button>
                         <Button type="text" icon={<ReloadOutlined />} onClick={fetchListBook} />
                     </Space>
@@ -297,7 +313,12 @@ function Book() {
                     }}
                 />
 
-                <DetailBook show={openDetailBook} onClose={closeDetailBook} />
+                <DetailBook
+                    openDetailBook={openDetailBook}
+                    setOpenDetailBook={setOpenDetailBook}
+                    data={dataDetailBook}
+                    setDataDetailBook={setDataDetailBook}
+                />
 
                 <UpdateBook
                     open={openUpdateBook}
@@ -305,14 +326,6 @@ function Book() {
                     handleCancel={handleCancelUpdateBook}
                     handleOk={handleOkUpdateBook}
                     confirmLoading={confirmLoadingUpdateBook}
-                />
-
-                <AddBook
-                    open={openAddBook}
-                    form={formAddBook}
-                    handleCancel={handleCancelAddBook}
-                    handleOk={handleOkAddBook}
-                    confirmLoading={confirmLoadingAddBook}
                 />
 
                 <ImportBook

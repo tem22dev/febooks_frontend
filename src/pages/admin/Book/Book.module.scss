@@ -41,7 +41,14 @@
 
 .hidden_long {
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
+}
+
+.review_book {
+    padding: 6px 0px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 6px;
 }

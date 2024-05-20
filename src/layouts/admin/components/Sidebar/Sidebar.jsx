@@ -27,7 +27,11 @@ function Sidebar() {
             children: [
                 {
                     key: 'book-sub-1',
-                    label: <Link to="/admin/dash/books">CRUD Books</Link>,
+                    label: <Link to="/admin/dash/books">Danh sách</Link>,
+                },
+                {
+                    key: 'book-sub-2',
+                    label: <Link to="/admin/dash/books/add">Thêm sách</Link>,
                 },
             ],
         },

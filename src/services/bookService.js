@@ -9,6 +9,19 @@ export const getAllBook = async () => {
     }
 };
 
+export const getSliderBookById = async (idBook) => {
+    try {
+        const res = await request.get('books/sliders', {
+            params: {
+                idBook,
+            },
+        });
+        return res;
+    } catch (error) {
+        throw Error(error);
+    }
+};
+
 export const searchBook = async ({ ...values }) => {
     try {
         const res = await request.get('books/search', {
@@ -22,21 +35,21 @@ export const searchBook = async ({ ...values }) => {
     }
 };
 
-export const createBook = async ({ ...userData }) => {
+export const createBook = async ({ ...bookData }) => {
     try {
-        const res = await request.post('users/create', userData);
+        const res = await request.post('books/create', bookData);
         return res;
     } catch (error) {
         throw error.response.data;
     }
 };
 
-export const uploadAvatarImg = async (file) => {
+export const uploadImgBook = async (file) => {
     try {
         const formData = new FormData();
-        formData.append('avatar', file);
+        formData.append('book', file);
 
-        const response = await request.post('users/upload/avatar', formData, {
+        const response = await request.post('books/upload/image', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
@@ -47,27 +60,73 @@ export const uploadAvatarImg = async (file) => {
     }
 };
 
-export const importBook = async (data) => {
+// export const importBook = async (data) => {
+//     try {
+//         const res = await request.post('users/import/bulk-create', data);
+//         return res;
+//     } catch (error) {
+//         throw error.response.data;
+//     }
+// };
+
+// export const updateBook = async (data) => {
+//     try {
+//         const res = await request.put('users/update', data);
+//         return res;
+//     } catch (error) {
+//         throw error.response.data;
+//     }
+// };
+
+// export const deleteBook = async (id) => {
+//     try {
+//         const res = await request.delete(`users/delete/${id}`);
+//         return res;
+//     } catch (error) {
+//         throw error.response.data;
+//     }
+// };
+
+// Call Fetch Category
+export const authorBook = async () => {
     try {
-        const res = await request.post('users/import/bulk-create', data);
+        const res = await request.get('books/cate/author');
         return res;
     } catch (error) {
         throw error.response.data;
     }
 };
 
-export const updateBook = async (data) => {
+export const genreBook = async () => {
     try {
-        const res = await request.put('users/update', data);
+        const res = await request.get('books/cate/genre');
         return res;
     } catch (error) {
         throw error.response.data;
     }
 };
 
-export const deleteBook = async (id) => {
+export const publisherBook = async () => {
     try {
-        const res = await request.delete(`users/delete/${id}`);
+        const res = await request.get('books/cate/publisher');
+        return res;
+    } catch (error) {
+        throw error.response.data;
+    }
+};
+
+export const supplierBook = async () => {
+    try {
+        const res = await request.get('books/cate/supplier');
+        return res;
+    } catch (error) {
+        throw error.response.data;
+    }
+};
+
+export const languageBook = async () => {
+    try {
+        const res = await request.get('books/cate/language');
         return res;
     } catch (error) {
         throw error.response.data;

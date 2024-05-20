@@ -150,6 +150,7 @@ function UpdateUser(props) {
 
     return (
         <Modal
+            forceRender
             title="Cập nhật người dùng"
             open={openModal}
             onOk={() => {
