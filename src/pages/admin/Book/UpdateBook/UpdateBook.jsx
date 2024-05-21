@@ -259,7 +259,7 @@ const UpdateBook = () => {
         } else {
             notification.error({
                 message: 'Đã có lỗi xảy ra',
-                description: res.message,
+                description: res.errMessage,
                 duration: 6,
             });
         }

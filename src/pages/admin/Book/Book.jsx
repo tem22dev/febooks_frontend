@@ -114,6 +114,20 @@ function Book() {
         }, 1500);
     };
 
+    // Handle delete book
+    const handleDeleteBook = async (id) => {
+        const res = await bookService.deleteBook(id);
+        if (res && res.errCode === 0) {
+            message.success(res.message);
+            fetchListBook();
+        } else {
+            notification.error({
+                message: 'Có lỗi xảy ra',
+                description: res.errMessage,
+            });
+        }
+    };
+
     // Columns table
     const columns = [
         {
@@ -204,6 +218,7 @@ function Book() {
                         description="Bạn có chắc chắn muốn xoá sách này ?"
                         okText="Xác nhận"
                         cancelText="Huỷ"
+                        onConfirm={() => handleDeleteBook(record.id)}
                         icon={<QuestionCircleOutlined style={{ color: 'red', cursor: 'pointer' }} />}
                     >
                         <Tag color="#f50" style={{ cursor: 'pointer' }}>

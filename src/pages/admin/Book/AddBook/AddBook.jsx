@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
 import {
     Button,
@@ -17,7 +18,7 @@ import {
     Layout,
     AutoComplete,
 } from 'antd';
-import { LoadingOutlined, PlusOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import { LoadingOutlined, PlusOutlined, PlusCircleOutlined, RollbackOutlined } from '@ant-design/icons';
 
 import styles from './AddBook.module.scss';
 import * as bookService from '../../../../services/bookService';
@@ -25,6 +26,7 @@ import TextEditor from '../../../../components/TextEditor';
 
 const AddRook = (props) => {
     const { Content } = Layout;
+    const navigate = useNavigate();
     const [form] = Form.useForm();
     const [isSubmit, setIsSubmit] = useState(false);
 
@@ -255,7 +257,17 @@ const AddRook = (props) => {
         <>
             <Content className={clsx(styles.wrapper)}>
                 <div className={clsx(styles.content)}>
-                    <h1 className={styles.heading}>Thêm sách</h1>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <h1 className={styles.heading}>Thêm sách</h1>
+                        <Button
+                            type="primary"
+                            htmlType="submit"
+                            icon={<RollbackOutlined />}
+                            onClick={() => navigate('/admin/dash/books')}
+                        >
+                            Trở lại
+                        </Button>
+                    </div>
                     <Form
                         form={form}
                         name="add-book"

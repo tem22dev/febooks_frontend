@@ -91,14 +91,14 @@ export const updateBook = async (data) => {
     }
 };
 
-// export const deleteBook = async (id) => {
-//     try {
-//         const res = await request.delete(`users/delete/${id}`);
-//         return res;
-//     } catch (error) {
-//         throw error.response.data;
-//     }
-// };
+export const deleteBook = async (id) => {
+    try {
+        const res = await request.delete(`books/delete/${id}`);
+        return res;
+    } catch (error) {
+        throw error.response.data;
+    }
+};
 
 // Call Fetch Category
 export const authorBook = async () => {
