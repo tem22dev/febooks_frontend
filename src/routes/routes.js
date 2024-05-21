@@ -13,6 +13,7 @@ import BookDetail from '../pages/BookDetail';
 import Dashboard from '../pages/Admin/Dashboard';
 import Book from '../pages/Admin/Book';
 import AddBook from '../pages/Admin/Book/AddBook';
+import UpdateBook from '../pages/Admin/Book/UpdateBook';
 import User from '../pages/Admin/User';
 import Order from '../pages/Admin/Order';
 // import Login from '../pages/Admin/Login';
@@ -31,6 +32,7 @@ const privateRoutes = [
     { path: config.routes.dash, component: Dashboard },
     { path: config.routes.book, component: Book },
     { path: config.routes.addBook, component: AddBook },
+    { path: config.routes.editBook, component: UpdateBook },
     { path: config.routes.user, component: User },
     { path: config.routes.order, component: Order },
 ];

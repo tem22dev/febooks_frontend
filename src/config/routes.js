@@ -7,6 +7,7 @@ const routes = {
     dash: 'admin/dash',
     book: 'admin/dash/books',
     addBook: 'admin/dash/books/add',
+    editBook: 'admin/dash/books/edit',
     user: 'admin/dash/users',
     order: 'admin/dash/orders',
     // dashAuth: 'admin/auth/login',

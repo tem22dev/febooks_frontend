@@ -17,7 +17,7 @@ import {
     Layout,
     AutoComplete,
 } from 'antd';
-import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import { LoadingOutlined, PlusOutlined, PlusCircleOutlined } from '@ant-design/icons';
 
 import styles from './AddBook.module.scss';
 import * as bookService from '../../../../services/bookService';
@@ -483,7 +483,12 @@ const AddRook = (props) => {
                             </Col>
                             <Col span={24}>
                                 <Form.Item>
-                                    <Button type="primary" htmlType="submit" loading={isSubmit}>
+                                    <Button
+                                        type="primary"
+                                        htmlType="submit"
+                                        loading={isSubmit}
+                                        icon={<PlusCircleOutlined />}
+                                    >
                                         Thêm sách
                                     </Button>
                                 </Form.Item>

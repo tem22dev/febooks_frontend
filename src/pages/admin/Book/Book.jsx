@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import clsx from 'clsx';
 import moment from 'moment';
 import {
@@ -8,18 +9,16 @@ import {
     ReloadOutlined,
     QuestionCircleOutlined,
 } from '@ant-design/icons';
-import { Layout, Button, Form, Space, Table, Tag, Popconfirm, Modal, Upload, Image } from 'antd';
+import { Layout, Button, Form, Space, Table, Tag, Popconfirm, Modal, Upload, Image, message } from 'antd';
 import { RiDeleteBin5Fill } from 'react-icons/ri';
 import { FaEdit } from 'react-icons/fa';
 import { v4 as uuidv4 } from 'uuid';
 
 import SearchBook from './SearchBook';
 import DetailBook from './DetailBook';
-import UpdateBook from './UpdateBook';
 import ImportBook from './ImportBook';
 import styles from './Book.module.scss';
 import * as bookService from '../../../services/bookService';
-import { Link } from 'react-router-dom';
 
 const ENV = import.meta.env;
 
@@ -38,10 +37,6 @@ function Book() {
 
     const [books, setBooks] = useState([]);
     const [loadingTable, setLoadingTable] = useState(false);
-
-    const [previewOpen, setPreviewOpen] = useState(false);
-    const [previewImage, setPreviewImage] = useState('');
-    const [previewTitle, setPreviewTitle] = useState('');
 
     // Map data
     const flatBook = (listBook) => {
@@ -65,7 +60,11 @@ function Book() {
 
     // Handle search book
     const onFinishSearch = async (values) => {
-        const { title, nameAuthor, nameGenre } = values;
+        let data = {};
+        for (let item in values) {
+            data[item] = values[item]?.trim();
+        }
+        const { title, nameAuthor, nameGenre } = data;
         let params = {};
         if (title) {
             params = { title, ...params };
@@ -76,40 +75,25 @@ function Book() {
         if (nameGenre) {
             params = { nameGenre, ...params };
         }
+        if (!!Object.keys(params).length) {
+            const listBook = await bookService.searchBook(params);
+            const flatBookList = flatBook(listBook?.data);
 
-        const listBook = await bookService.searchBook(params);
-        const flatBookList = flatBook(listBook.data);
-
-        if (flatBookList.length === 0) {
-            message.info('Không tìm thấy sách', 3);
-            return;
+            if (flatBookList.length === 0) {
+                message.info('Không tìm thấy sách');
+                return;
+            }
+            setBooks(flatBookList);
+            message.success(`Đã tìm thấy ${flatBookList.length} cuốn sách`);
+        } else {
+            message.warning('Vui lòng nhập từ khoá', 4);
         }
-        setBooks(flatBookList);
     };
 
     // Handle show detail book
     const showDetailBook = (record) => {
         setOpenDetailBook(true);
         setDataDetailBook(record);
-    };
-
-    // Handle update book
-    const showModalUpdateBook = () => {
-        setOpenUpdateBook(true);
-    };
-
-    const handleCancelUpdateBook = () => {
-        formUpdateBook.resetFields();
-        console.log('Clicked cancel button');
-        setOpenUpdateBook(false);
-    };
-
-    const handleOkUpdateBook = () => {
-        setConfirmLoadingUpdateBook(true);
-        setTimeout(() => {
-            setOpenUpdateBook(false);
-            setConfirmLoadingUpdateBook(false);
-        }, 1500);
     };
 
     // Handle import book
@@ -128,31 +112,6 @@ function Book() {
             setOpenImportBook(false);
             setConfirmLoadingImportBook(false);
         }, 1500);
-    };
-
-    const getBase64 = (file) =>
-        new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = (error) => reject(error);
-        });
-
-    const handleCancel = () => setPreviewOpen(false);
-
-    const handlePreview = async (file) => {
-        if (!file.url && !file.preview) {
-            file.preview = await getBase64(file.originFileObj);
-        }
-        setPreviewImage(file.url || file.preview);
-        setPreviewOpen(true);
-        setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
-    };
-
-    const handleChange = ({ fileList: newFileList }, bookId) => {
-        setBooks((prevBooks) =>
-            prevBooks.map((book) => (book.id === bookId ? { ...book, fileList: newFileList } : book)),
-        );
     };
 
     // Columns table
@@ -232,11 +191,13 @@ function Book() {
         {
             title: 'Thao tác',
             dataIndex: 'action',
-            render: () => (
+            render: (_, record) => (
                 <Space>
-                    <Tag color="#2db7f5" style={{ cursor: 'pointer' }} onClick={showModalUpdateBook}>
-                        <FaEdit />
-                    </Tag>
+                    <Link to={`edit?id=${record.id}`}>
+                        <Tag color="#2db7f5" style={{ cursor: 'pointer' }}>
+                            <FaEdit />
+                        </Tag>
+                    </Link>
                     <Popconfirm
                         placement="topLeft"
                         title="Xác nhận xoá sách"
@@ -318,14 +279,6 @@ function Book() {
                     setOpenDetailBook={setOpenDetailBook}
                     data={dataDetailBook}
                     setDataDetailBook={setDataDetailBook}
-                />
-
-                <UpdateBook
-                    open={openUpdateBook}
-                    form={formUpdateBook}
-                    handleCancel={handleCancelUpdateBook}
-                    handleOk={handleOkUpdateBook}
-                    confirmLoading={confirmLoadingUpdateBook}
                 />
 
                 <ImportBook

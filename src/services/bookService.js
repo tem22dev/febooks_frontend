@@ -22,6 +22,19 @@ export const getSliderBookById = async (idBook) => {
     }
 };
 
+export const getBookById = async (id) => {
+    try {
+        const res = await request.get('books/one-book', {
+            params: {
+                id,
+            },
+        });
+        return res;
+    } catch (error) {
+        throw Error(error);
+    }
+};
+
 export const searchBook = async ({ ...values }) => {
     try {
         const res = await request.get('books/search', {
@@ -69,14 +82,14 @@ export const uploadImgBook = async (file) => {
 //     }
 // };
 
-// export const updateBook = async (data) => {
-//     try {
-//         const res = await request.put('users/update', data);
-//         return res;
-//     } catch (error) {
-//         throw error.response.data;
-//     }
-// };
+export const updateBook = async (data) => {
+    try {
+        const res = await request.put('books/update', data);
+        return res;
+    } catch (error) {
+        throw error.response.data;
+    }
+};
 
 // export const deleteBook = async (id) => {
 //     try {

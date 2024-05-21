@@ -1,0 +1,47 @@
+.wrapper {
+    margin: 20px;
+    min-height: calc(100vh - 104px);
+    border-radius: 8px;
+}
+
+.content {
+    max-width: none;
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 14px;
+}
+
+.heading {
+    font-size: 1.8rem;
+    color: #333;
+    margin: 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.form {
+    margin-top: 8px;
+}
+
+.sub_title {
+    font-size: 1.6rem;
+    color: #333;
+    margin-bottom: 12px;
+}
+
+.editor {
+    border-radius: 20px;
+    box-shadow: 0 -3px 29px -5px rgba(34, 39, 47, 0.14);
+    padding: 16px;
+    border-radius: 4px;
+    min-height: 300px;
+    background-color: #fff;
+    margin-bottom: 24px;
+}
+
+.spin {
+    padding: 50px;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 4;
+}
