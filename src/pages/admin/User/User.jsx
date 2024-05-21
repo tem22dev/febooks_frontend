@@ -178,7 +178,6 @@ function User() {
                             setDataUpdate(record);
                         }}
                     >
-                        {/* <EditOutlined /> */}
                         <FaEdit />
                     </Tag>
                     <Popconfirm
@@ -191,7 +190,6 @@ function User() {
                         icon={<QuestionCircleOutlined style={{ color: 'red', cursor: 'pointer' }} />}
                     >
                         <Tag color="#f50" style={{ cursor: 'pointer' }}>
-                            {/* <DeleteOutlined /> */}
                             <RiDeleteBin5Fill />
                         </Tag>
                     </Popconfirm>
