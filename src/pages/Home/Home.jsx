@@ -1,74 +1,64 @@
 import clsx from 'clsx';
 import { FilterTwoTone, ReloadOutlined } from '@ant-design/icons';
-import { Row, Col, Form, Checkbox, Divider, InputNumber, Button, Rate, Tabs, Pagination, Spin } from 'antd';
-import { useEffect, useState } from 'react';
+import { Row, Col, Form, Checkbox, Divider, InputNumber, Button, Rate, Radio, Pagination, Spin } from 'antd';
+import { useCallback, useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import { callFetchCategory, callFetchListBook } from '../../services/api';
+import React from 'react';
+
+import * as bookService from '../../services/bookService';
 import styles from './Home.module.scss';
+
+const ENV = import.meta.env;
+
 function Home() {
     const [listCategory, setListCategory] = useState([]);
-
     const [listBook, setListBook] = useState([]);
     const [current, setCurrent] = useState(1);
-    const [pageSize, setPageSize] = useState(10);
+    const [pageSize, setPageSize] = useState(4);
     const [total, setTotal] = useState(0);
-
     const [isLoading, setIsLoading] = useState(false);
     const [filter, setFilter] = useState('');
-    const [sortQuery, setSortQuery] = useState('sort=-sold');
+    const [sortQuery, setSortQuery] = useState('sort=-quantitySold');
 
     const [form] = Form.useForm();
     const navigate = useNavigate();
 
-    // useEffect(() => {
-    //     const initCategory = async () => {
-    //         const res = await callFetchCategory();
-    //         if (res && res.data) {
-    //             const d = res.data.map(item => {
-    //                 return { label: item, value: item }
-    //             })
-    //             setListCategory(d);
-    //         }
-    //     }
-    //     initCategory();
-    // }, []);
+    useEffect(() => {
+        const initCategory = async () => {
+            const res = await bookService.genreBook();
+            if (res && res?.data) {
+                const categories = res.data.map((item) => ({ label: item.nameGenre, value: item.id }));
+                setListCategory(categories);
+            }
+        };
+        initCategory();
+    }, []);
 
-    // useEffect(() => {
-    //     fetchBook();
-    // }, [current, pageSize, filter, sortQuery]);
-
-    const fetchBook = async () => {
+    const fetchBook = useCallback(async () => {
         setIsLoading(true);
         let query = `current=${current}&pageSize=${pageSize}`;
-        if (filter) {
-            query += `&${filter}`;
-        }
-        if (sortQuery) {
-            query += `&${sortQuery}`;
-        }
+        if (filter) query += `&${filter}`;
+        if (sortQuery) query += `&${sortQuery}`;
 
-        const res = await callFetchListBook(query);
-        if (res && res.data) {
-            setListBook(res.data.result);
-            setTotal(res.data.meta.total);
+        const res = await bookService.getAllBookSort(query);
+        if (res && res.result) {
+            setListBook(res.result);
+            setTotal(res.meta.total);
         }
         setIsLoading(false);
-    };
+    }, [current, pageSize, filter, sortQuery]);
 
-    const handleOnchangePage = (pagination) => {
-        if (pagination && pagination.current !== current) {
-            setCurrent(pagination.current);
-        }
-        if (pagination && pagination.pageSize !== pageSize) {
-            setPageSize(pagination.pageSize);
-            setCurrent(1);
-        }
+    useEffect(() => {
+        fetchBook();
+    }, [fetchBook]);
+
+    const handleOnchangePage = (page, pageSize) => {
+        setCurrent(page);
+        setPageSize(pageSize);
     };
 
     const handleChangeFilter = (changedValues, values) => {
-        // console.log(">>> check changedValues, values: ", changedValues, values)
-
-        //only fire if category changes
+        // only fire if category changes
         if (changedValues.category) {
             const cate = values.category;
             if (cate && cate.length > 0) {
@@ -82,10 +72,8 @@ function Home() {
     };
 
     const onFinish = (values) => {
-        // console.log('>> check values: ', values)
-
         if (values?.range?.from >= 0 && values?.range?.to >= 0) {
-            let f = `price>=${values?.range?.from}&price<=${values?.range?.to}`;
+            let f = `priceMin=${values?.range?.from}&priceMax=${values?.range?.to}`;
             if (values?.category?.length) {
                 const cate = values?.category?.join(',');
                 f += `&category=${cate}`;
@@ -93,29 +81,6 @@ function Home() {
             setFilter(f);
         }
     };
-
-    const items = [
-        {
-            key: 'sort=-sold',
-            label: `Phổ biến`,
-            children: <></>,
-        },
-        {
-            key: 'sort=-updatedAt',
-            label: `Hàng Mới`,
-            children: <></>,
-        },
-        {
-            key: 'sort=price',
-            label: `Giá Thấp Đến Cao`,
-            children: <></>,
-        },
-        {
-            key: 'sort=-price',
-            label: `Giá Cao Đến Thấp`,
-            children: <></>,
-        },
-    ];
 
     const nonAccentVietnamese = (str) => {
         str = str.replace(/A|Á|À|Ã|Ạ|Â|Ấ|Ầ|Ẫ|Ậ|Ă|Ắ|Ằ|Ẵ|Ặ/g, 'A');
@@ -132,18 +97,15 @@ function Home() {
         str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, 'y');
         str = str.replace(/Đ/g, 'D');
         str = str.replace(/đ/g, 'd');
-        // Some system encode vietnamese combining accent as individual utf-8 characters
-        str = str.replace(/\u0300|\u0301|\u0303|\u0309|\u0323/g, ''); // Huyền sắc hỏi ngã nặng
-        str = str.replace(/\u02C6|\u0306|\u031B/g, ''); // Â, Ê, Ă, Ơ, Ư
+        str = str.replace(/\u0300|\u0301|\u0303|\u0309|\u0323/g, '');
+        str = str.replace(/\u02C6|\u0306|\u031B/g, '');
         return str;
     };
 
     const convertSlug = (str) => {
         str = nonAccentVietnamese(str);
-        str = str.replace(/^\s+|\s+$/g, ''); // trim
-        str = str.toLowerCase();
+        str = str.trim().toLowerCase();
 
-        // remove accents, swap ñ for n, etc
         const from =
             'ÁÄÂÀÃÅČÇĆĎÉĚËÈÊẼĔȆĞÍÌÎÏİŇÑÓÖÒÔÕØŘŔŠŞŤÚŮÜÙÛÝŸŽáäâàãåčçćďéěëèêẽĕȇğíìîïıňñóöòôõøðřŕšşťúůüùûýÿžþÞĐđßÆa·/_,:;';
         const to =
@@ -153,25 +115,32 @@ function Home() {
         }
 
         str = str
-            .replace(/[^a-z0-9 -]/g, '') // remove invalid chars
-            .replace(/\s+/g, '-') // collapse whitespace and replace by -
-            .replace(/-+/g, '-'); // collapse dashes
+            .replace(/[^a-z0-9 -]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-');
 
         return str;
     };
 
     const handleRedirectBook = (book) => {
-        const slug = convertSlug(book.mainText);
-        navigate(`/book-detail/${slug}?id=${book._id}`);
+        const slug = convertSlug(book.title);
+        navigate(`/book/${slug}?id=${book.id}`);
     };
 
     return (
-        <div style={{ backgroundColor: '#f5f5fa', padding: '20px 0' }}>
+        <div style={{ backgroundColor: '#f0f0f0', padding: '14px 0' }}>
             <div className={clsx(styles.container)}>
-                <Row gutter={[20, 20]}>
-                    <Col md={4} sm={0} xs={0}>
-                        <div style={{ padding: '20px', background: '#fff', borderRadius: 5 }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Row gutter={[16, 16]}>
+                    <Col lg={6} sm={0} xs={0}>
+                        <div style={{ padding: '14px', background: '#fff', borderRadius: 5 }}>
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    paddingBottom: '10px',
+                                    borderBottom: '1px solid #eee',
+                                }}
+                            >
                                 <span>
                                     {' '}
                                     <FilterTwoTone />
@@ -185,22 +154,15 @@ function Home() {
                                     }}
                                 />
                             </div>
-                            <Divider />
-                            <Form
-                                onFinish={onFinish}
-                                form={form}
-                                onValuesChange={(changedValues, values) => handleChangeFilter(changedValues, values)}
-                            >
+                            <Form onFinish={onFinish} form={form} onValuesChange={handleChangeFilter}>
                                 <Form.Item name="category" label="Danh mục sản phẩm" labelCol={{ span: 24 }}>
                                     <Checkbox.Group>
                                         <Row>
-                                            {listCategory?.map((item, index) => {
-                                                return (
-                                                    <Col span={24} key={`index-${index}`} style={{ padding: '7px 0' }}>
-                                                        <Checkbox value={item.value}>{item.label}</Checkbox>
-                                                    </Col>
-                                                );
-                                            })}
+                                            {listCategory?.map((item, index) => (
+                                                <Col span={24} key={`index-${index}`} style={{ padding: '7px 0' }}>
+                                                    <Checkbox value={item.value}>{item.label}</Checkbox>
+                                                </Col>
+                                            ))}
                                         </Row>
                                     </Checkbox.Group>
                                 </Form.Item>
@@ -270,57 +232,60 @@ function Home() {
                         </div>
                     </Col>
 
-                    <Col md={20} xs={24}>
-                        <Spin spinning={isLoading} tip="Loading...">
-                            <div style={{ padding: '20px', background: '#fff', borderRadius: 5 }}>
+                    <Col lg={18} xs={24}>
+                        <Spin spinning={isLoading} tip="Đang tải...">
+                            <div style={{ padding: '2px 14px 14px', background: '#fff', borderRadius: 5 }}>
                                 <Row>
-                                    <Tabs
-                                        defaultActiveKey="sort=-sold"
-                                        items={items}
-                                        onChange={(value) => {
-                                            setSortQuery(value);
+                                    <Radio.Group
+                                        onChange={(e) => {
+                                            setSortQuery(e.target.value);
                                         }}
-                                        style={{ overflowX: 'auto' }}
-                                    />
+                                        value={sortQuery}
+                                        style={{ padding: '8px 0' }}
+                                    >
+                                        <Radio.Button value="sort=-quantitySold">Bán chạy</Radio.Button>
+                                        <Radio.Button value="sort=-price">Giá cao đến thấp</Radio.Button>
+                                        <Radio.Button value="sort=price">Giá thấp đến cao</Radio.Button>
+                                        <Radio.Button value="sort=-updatedAt">Mới nhất</Radio.Button>
+                                    </Radio.Group>
                                 </Row>
                                 <Row className={clsx(styles.customize_row)}>
-                                    {listBook?.map((item, index) => {
-                                        return (
-                                            <div
-                                                className={clsx(styles.column)}
-                                                key={`book-${index}`}
-                                                onClick={() => handleRedirectBook(item)}
-                                            >
-                                                <div className={clsx(styles.wrapper)}>
-                                                    <div className={clsx(styles.thumbnail)}>
-                                                        <img
-                                                            src={`${import.meta.env.VITE_BACKEND_URL}/images/book/${
-                                                                item.thumbnail
-                                                            }`}
-                                                            alt="thumbnail book"
-                                                        />
-                                                    </div>
-                                                    <div className={clsx(styles.text)} title={item.mainText}>
-                                                        {item.mainText}
-                                                    </div>
-                                                    <div className={clsx(styles.price)}>
-                                                        {new Intl.NumberFormat('vi-VN', {
-                                                            style: 'currency',
-                                                            currency: 'VND',
-                                                        }).format(item?.price ?? 0)}
-                                                    </div>
-                                                    <div className={clsx(styles.rating)}>
-                                                        <Rate
-                                                            value={5}
-                                                            disabled
-                                                            style={{ color: '#ffce3d', fontSize: 10 }}
-                                                        />
-                                                        <span>Đã bán {item.sold}</span>
-                                                    </div>
+                                    {listBook?.map((item, index) => (
+                                        <div className={clsx(styles.column)} key={`book-${index}`}>
+                                            <div className={clsx(styles.wrapper)}>
+                                                <div
+                                                    className={clsx(styles.thumbnail)}
+                                                    onClick={() => handleRedirectBook(item)}
+                                                >
+                                                    <img
+                                                        src={`${ENV.VITE_BASE_URL_BACKEND}/images/books/${item.thumbnail}`}
+                                                        alt={`${item.title}`}
+                                                    />
+                                                </div>
+                                                <div
+                                                    className={clsx(styles.text)}
+                                                    title={item.title}
+                                                    onClick={() => handleRedirectBook(item)}
+                                                >
+                                                    {item.title}
+                                                </div>
+                                                <div className={clsx(styles.price)}>
+                                                    {new Intl.NumberFormat('vi-VN', {
+                                                        style: 'currency',
+                                                        currency: 'VND',
+                                                    }).format(item?.price ?? 0)}
+                                                </div>
+                                                <div className={clsx(styles.rating)}>
+                                                    <Rate
+                                                        value={5}
+                                                        disabled
+                                                        style={{ color: '#ffce3d', fontSize: 10 }}
+                                                    />
+                                                    <span>Đã bán {item.quantitySold}</span>
                                                 </div>
                                             </div>
-                                        );
-                                    })}
+                                        </div>
+                                    ))}
                                 </Row>
                                 <div style={{ marginTop: 30 }}></div>
                                 <Row style={{ display: 'flex', justifyContent: 'center' }}>
@@ -329,7 +294,7 @@ function Home() {
                                         total={total}
                                         pageSize={pageSize}
                                         responsive
-                                        onChange={(p, s) => handleOnchangePage({ current: p, pageSize: s })}
+                                        onChange={handleOnchangePage}
                                     />
                                 </Row>
                             </div>

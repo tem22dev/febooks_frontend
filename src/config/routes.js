@@ -1,8 +1,9 @@
 const routes = {
     home: '/',
     auth: '/auth',
-    bookDetail: '/book-detail/:slug',
-    checkout: '/checkout',
+    bookDetail: '/book/:slug',
+    orderPub: '/book/order',
+    history: '/book/history',
     // Admin
     dash: 'admin/dash',
     book: 'admin/dash/books',

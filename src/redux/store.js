@@ -4,16 +4,18 @@ import { configureStore, combineReducers } from '@reduxjs/toolkit';
 
 import appReducer from './app/appSlice';
 import accountSlice from './account/accountSlice';
+import orderSlice from './order/orderSlice';
 
 const persistConfig = {
     key: 'root',
     version: 1,
     storage,
-    whitelist: ['app'],
+    whitelist: ['app', 'order'],
 };
 const rootReducer = combineReducers({
     app: appReducer,
     account: accountSlice,
+    order: orderSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

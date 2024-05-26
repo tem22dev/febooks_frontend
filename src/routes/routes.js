@@ -7,8 +7,9 @@ import { HeaderOnly } from '../layouts';
 // Pages
 import Home from '../pages/Home';
 import Auth from '../pages/Auth';
-import Checkout from '../pages/Checkout';
 import BookDetail from '../pages/BookDetail';
+import OrderPub from '../pages/Order';
+import History from '../pages/History';
 
 import Dashboard from '../pages/Admin/Dashboard';
 import Book from '../pages/Admin/Book';
@@ -22,8 +23,9 @@ import Order from '../pages/Admin/Order';
 const publicRoutes = [
     { path: config.routes.home, component: Home },
     { path: config.routes.auth, component: Auth, layout: HeaderOnly },
-    { path: config.routes.checkout, component: Checkout, layout: HeaderOnly },
+    { path: config.routes.orderPub, component: OrderPub, layout: HeaderOnly },
     { path: config.routes.bookDetail, component: BookDetail },
+    { path: config.routes.history, component: History, layout: HeaderOnly },
     // { path: config.routes.dashAuth, component: Login, layout: NoLayout },
 ];
 
