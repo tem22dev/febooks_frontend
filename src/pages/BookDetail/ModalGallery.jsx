@@ -1,7 +1,9 @@
-import { Col, Image, Modal, Row } from "antd";
-import { useEffect, useRef, useState } from "react";
+import { Col, Image, Modal, Row } from 'antd';
+import { useEffect, useRef, useState } from 'react';
 import ImageGallery from 'react-image-gallery';
-import './book.scss';
+import clsx from 'clsx';
+
+import styles from './BookDetail.module.scss';
 
 const ModalGallery = (props) => {
     const { isOpen, setIsOpen, currentIndex, items, title } = props;
@@ -12,7 +14,7 @@ const ModalGallery = (props) => {
         if (isOpen) {
             setActiveIndex(currentIndex);
         }
-    }, [isOpen, currentIndex])
+    }, [isOpen, currentIndex]);
 
     return (
         <Modal
@@ -21,7 +23,7 @@ const ModalGallery = (props) => {
             onCancel={() => setIsOpen(false)}
             footer={null} //hide footer
             closable={false} //hide close button
-            className="modal-gallery"
+            className={clsx(styles.modal_gallery)}
         >
             <Row gutter={[20, 20]}>
                 <Col span={16}>
@@ -40,31 +42,29 @@ const ModalGallery = (props) => {
                     <div>{title}</div>
                     <div>
                         <Row gutter={[20, 20]}>
-                            {
-                                items?.map((item, i) => {
-                                    return (
-                                        <Col key={`image-${i}`}>
-                                            <Image
-                                                wrapperClassName={"img-normal"}
-                                                width={100}
-                                                height={100}
-                                                src={item.original}
-                                                preview={false}
-                                                onClick={() => {
-                                                    refGallery.current.slideToIndex(i);
-                                                }}
-                                            />
-                                            <div className={activeIndex === i ? "active" : ""}></div>
-                                        </Col>
-                                    )
-                                })
-                            }
+                            {items?.map((item, i) => {
+                                return (
+                                    <Col key={`image-${i}`}>
+                                        <Image
+                                            wrapperClassName={'img-normal'}
+                                            width={100}
+                                            height={100}
+                                            src={item.original}
+                                            preview={false}
+                                            onClick={() => {
+                                                refGallery.current.slideToIndex(i);
+                                            }}
+                                        />
+                                        <div className={activeIndex === i ? clsx(styles.active) : ''}></div>
+                                    </Col>
+                                );
+                            })}
                         </Row>
                     </div>
                 </Col>
             </Row>
         </Modal>
-    )
-}
+    );
+};
 
 export default ModalGallery;

@@ -7,7 +7,7 @@ import { IoSearchOutline } from 'react-icons/io5';
 import { Divider, Badge, Drawer, Input } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { DownOutlined } from '@ant-design/icons';
-import { Dropdown, Space, message, Avatar } from 'antd';
+import { Dropdown, Space, message, Avatar, Popover } from 'antd';
 import { useNavigate } from 'react-router';
 
 import styles from './Header.module.scss';
@@ -20,6 +20,8 @@ function Header() {
     const [openDrawer, setOpenDrawer] = useState(false);
     const isAuthenticated = useSelector((state) => state.account.isAuthenticated);
     const user = useSelector((state) => state.account.user);
+    const carts = useSelector((state) => state.order.carts);
+    let total = 0;
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -41,6 +43,14 @@ function Header() {
         },
         {
             label: (
+                <label style={{ cursor: 'pointer' }} onClick={() => navigate('/book/history')}>
+                    Lịch sử mua hàng
+                </label>
+            ),
+            key: 'history',
+        },
+        {
+            label: (
                 <label style={{ cursor: 'pointer' }} onClick={() => handleLogout()}>
                     Đăng xuất
                 </label>
@@ -59,6 +69,54 @@ function Header() {
             key: 'admin',
         });
     }
+
+    if (carts?.length > 0) {
+        for (const item of carts) {
+            total += item.quantity;
+        }
+    }
+
+    const contentPopover = () => {
+        return (
+            <div className={clsx(styles.pop_cart_body)}>
+                <div className={clsx(styles.pop_cart_content)}>
+                    {carts?.map((item) => {
+                        return (
+                            <div className={clsx(styles.book)} key={item.id}>
+                                <div className={clsx(styles.img_book)}>
+                                    <img
+                                        src={`${ENV.VITE_BASE_URL_BACKEND}/images/books/${item.detail.thumbnail}`}
+                                        alt={item.detail.title}
+                                    />
+                                </div>
+                                <div className={clsx(styles.content)}>
+                                    <div className={clsx(styles.title)}>{item.detail.title}</div>
+                                    <span className={clsx(styles.price_item)}>
+                                        {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(
+                                            item?.detail?.price,
+                                        )}{' '}
+                                        x {item.quantity}
+                                    </span>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+                <div className={clsx(styles.pop_cart_footer)}>
+                    <div className={clsx(styles.price_total)}>
+                        <span>Tổng cộng</span>
+                        <strong className={clsx(styles.price)}>
+                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(1000000)}{' '}
+                        </strong>
+                    </div>
+                    <button className={clsx(styles.btn_cart)} onClick={() => navigate('/book/order')}>
+                        Xem giỏ hàng
+                    </button>
+                </div>
+            </div>
+        );
+    };
+
     return (
         <>
             <div className={clsx(styles.container)}>
@@ -87,10 +145,19 @@ function Header() {
                     </div>
                     <nav className={clsx(styles.header_bottom)}>
                         <ul id={clsx(styles.navigation)} className={clsx(styles.navigation)}>
-                            <li className={clsx(styles.navigation_item)}>
-                                <Badge count={5} size={'small'}>
-                                    <FiShoppingCart className={clsx(styles.icon_cart)} />
-                                </Badge>
+                            <li className={clsx(styles.navigation_item)} onClick={() => navigate('/book/order')}>
+                                <Popover
+                                    className={clsx(styles.popover_carts)}
+                                    placement="bottom"
+                                    rootClassName="popover-cart"
+                                    title="Sản phẩm mới thêm"
+                                    content={contentPopover}
+                                    arrow={true}
+                                >
+                                    <Badge count={total} size={'small'} showZero>
+                                        <FiShoppingCart className={clsx(styles.icon_cart)} />
+                                    </Badge>
+                                </Popover>
                             </li>
                             <li className={clsx(styles.navigation_item, styles.mobile)}>
                                 <Divider type="vertical" />

@@ -9,6 +9,15 @@ export const getAllBook = async () => {
     }
 };
 
+export const getAllBookSort = async (query) => {
+    try {
+        const res = await request.get(`books/sort?${query}`);
+        return res;
+    } catch (error) {
+        throw Error(error);
+    }
+};
+
 export const getSliderBookById = async (idBook) => {
     try {
         const res = await request.get('books/sliders', {

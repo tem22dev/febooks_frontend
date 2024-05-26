@@ -282,6 +282,7 @@ const AddRook = (props) => {
                                     label="Tên sách"
                                     name="title"
                                     rules={[{ required: true, message: 'Vui lòng nhập tên sách!' }]}
+                                    hasFeedback
                                 >
                                     <Input />
                                 </Form.Item>
@@ -292,6 +293,7 @@ const AddRook = (props) => {
                                     label="ISBN"
                                     name="ISBN"
                                     // rules={[{ required: true, message: 'Vui lòng nhập ISBN sách!' }]}
+                                    hasFeedback
                                 >
                                     <Input />
                                 </Form.Item>
@@ -302,6 +304,7 @@ const AddRook = (props) => {
                                     label="Tác giả"
                                     name="nameAuthor"
                                     rules={[{ required: true, message: 'Vui lòng chọn tác giả!' }]}
+                                    hasFeedback
                                 >
                                     <Select showSearch allowClear options={listCateAuthor} />
                                 </Form.Item>
@@ -312,6 +315,7 @@ const AddRook = (props) => {
                                     label="Nhà xuất bản"
                                     name="namePublisher"
                                     rules={[{ required: true, message: 'Vui lòng chọn nhà xuất bản!' }]}
+                                    hasFeedback
                                 >
                                     <Select showSearch allowClear options={listCatePublisher} />
                                 </Form.Item>
@@ -322,6 +326,7 @@ const AddRook = (props) => {
                                     label="Nhà cung cấp"
                                     name="nameSupplier"
                                     rules={[{ required: true, message: 'Vui lòng chọn nhà cung cấp!' }]}
+                                    hasFeedback
                                 >
                                     <Select showSearch allowClear options={listCateSupplier} />
                                 </Form.Item>
@@ -332,6 +337,7 @@ const AddRook = (props) => {
                                     label="Năm xuất bản"
                                     name="publicationYear"
                                     rules={[{ required: true, message: 'Vui lòng nhập năm xuất bản!' }]}
+                                    hasFeedback
                                 >
                                     <DatePicker
                                         style={{ width: '100%' }}
@@ -346,6 +352,7 @@ const AddRook = (props) => {
                                     labelCol={{ span: 24 }}
                                     label="Ngôn ngữ sách"
                                     name="language"
+                                    hasFeedback
                                     rules={[{ required: true, message: 'Vui lòng chọn ngôn ngữ của sách!' }]}
                                 >
                                     <Select showSearch allowClear options={listCateLanguage} />
@@ -356,6 +363,7 @@ const AddRook = (props) => {
                                     labelCol={{ span: 24 }}
                                     label="Thể loại"
                                     name="nameGenre"
+                                    hasFeedback
                                     rules={[{ required: true, message: 'Vui lòng chọn thể loại!' }]}
                                 >
                                     <Select showSearch allowClear options={listCateGenre} />
@@ -366,6 +374,7 @@ const AddRook = (props) => {
                                     labelCol={{ span: 24 }}
                                     label="Giá tiền"
                                     name="price"
+                                    hasFeedback
                                     rules={[{ required: true, message: 'Vui lòng nhập giá tiền!' }]}
                                 >
                                     <InputNumber
@@ -381,6 +390,7 @@ const AddRook = (props) => {
                                     labelCol={{ span: 24 }}
                                     label="Số lượng"
                                     name="quantityAvailable"
+                                    hasFeedback
                                     rules={[{ required: true, message: 'Vui lòng nhập số lượng!' }]}
                                 >
                                     <InputNumber min={1} style={{ width: '100%' }} />
@@ -391,6 +401,7 @@ const AddRook = (props) => {
                                     labelCol={{ span: 24 }}
                                     label="Đã bán"
                                     name="quantitySold"
+                                    hasFeedback
                                     rules={[{ required: true, message: 'Vui lòng nhập số lượng đã bán!' }]}
                                     initialValue={0}
                                 >
@@ -403,6 +414,7 @@ const AddRook = (props) => {
                                     label="Số trang"
                                     name="numOfPage"
                                     // rules={[{ required: true, message: 'Vui lòng nhập số trang!' }]}
+                                    hasFeedback
                                 >
                                     <InputNumber min={1} style={{ width: '100%' }} />
                                 </Form.Item>
@@ -413,6 +425,7 @@ const AddRook = (props) => {
                                     label="Hình thức bìa"
                                     name="formality"
                                     // rules={[{ required: true, message: 'Vui lòng nhập hình thức!' }]}
+                                    hasFeedback
                                 >
                                     <AutoComplete
                                         options={[{ value: 'Bìa cứng' }, { value: 'Bìa mềm' }]}
@@ -425,9 +438,10 @@ const AddRook = (props) => {
                             <Col span={3}>
                                 <Form.Item
                                     labelCol={{ span: 24 }}
-                                    label="Kích thước bao bì"
+                                    label="Kích thước"
                                     name="packagingSize"
                                     // rules={[{ required: true, message: 'Vui lòng nhập hình thức!' }]}
+                                    hasFeedback
                                 >
                                     <AutoComplete
                                         options={[{ value: '14.5 x 20.5' }, { value: '20.5 x 13 x 1.3 cm' }]}
@@ -443,6 +457,7 @@ const AddRook = (props) => {
                                     label="Ảnh Thumbnail"
                                     name="thumbnail"
                                     rules={[{ required: true, message: 'Vui lòng chọn ảnh thumbnail!' }]}
+                                    hasFeedback
                                 >
                                     <Upload
                                         name="thumbnail"
@@ -469,6 +484,7 @@ const AddRook = (props) => {
                                     label="Ảnh Slider"
                                     name="slider"
                                     rules={[{ required: true, message: 'Vui lòng ảnh slider đã bán!' }]}
+                                    hasFeedback
                                 >
                                     <Upload
                                         multiple
