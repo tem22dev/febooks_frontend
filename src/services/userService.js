@@ -22,6 +22,28 @@ export const searchUser = async ({ ...values }) => {
     }
 };
 
+export const getUserById = async (id) => {
+    try {
+        const res = await request.get('users/get-one', {
+            params: {
+                id,
+            },
+        });
+        return res;
+    } catch (error) {
+        throw Error(error);
+    }
+};
+
+export const updatePassUser = async (id) => {
+    try {
+        const res = await request.post('users/change-pass', id);
+        return res;
+    } catch (error) {
+        throw Error(error);
+    }
+};
+
 export const createUser = async ({ ...userData }) => {
     try {
         const res = await request.post('users/create', userData);

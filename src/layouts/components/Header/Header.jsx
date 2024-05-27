@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router';
 import styles from './Header.module.scss';
 import { callLogout } from '../../../services/authServices';
 import { doLogoutAction } from '../../../redux/account/accountSlice';
+import ManaAccount from '../../../components/ManaAccount';
 
 const ENV = import.meta.env;
 
@@ -21,6 +22,7 @@ function Header() {
     const isAuthenticated = useSelector((state) => state.account.isAuthenticated);
     const user = useSelector((state) => state.account.user);
     const carts = useSelector((state) => state.order.carts);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     let total = 0;
 
     const navigate = useNavigate();
@@ -38,7 +40,11 @@ function Header() {
 
     let items = [
         {
-            label: <label style={{ cursor: 'pointer' }}>Quản lý tài khoản</label>,
+            label: (
+                <label style={{ cursor: 'pointer' }} onClick={() => setIsModalOpen(true)}>
+                    Quản lý tài khoản
+                </label>
+            ),
             key: 'account',
         },
         {
@@ -195,6 +201,7 @@ function Header() {
                 <p>Đăng xuất</p>
                 <Divider />
             </Drawer>
+            <ManaAccount isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
         </>
     );
 }

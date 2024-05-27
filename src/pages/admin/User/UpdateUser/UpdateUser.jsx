@@ -111,7 +111,7 @@ function UpdateUser(props) {
                 fullname: dataUpdate.fullname,
                 email: dataUpdate.email,
                 phone: dataUpdate.phone,
-                gender: dataUpdate.gender,
+                gender: dataUpdate.gender ?? '',
                 role: dataUpdate.role,
                 active: dataUpdate.active,
                 address: dataUpdate.address,

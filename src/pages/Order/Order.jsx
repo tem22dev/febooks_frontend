@@ -116,7 +116,7 @@ const Order = () => {
                     <Row gutter={[20, 20]}>
                         <Col md={18} xs={24}>
                             {carts?.map((item) => {
-                                const currentBookPrice = item?.detail?.price * item.quantity ?? 0;
+                                const currentBookPrice = item?.detail?.price * item?.quantity || 0;
                                 return (
                                     <div className={clsx(styles.order_book)} key={item.id}>
                                         <div className={clsx(styles.book_content)}>
@@ -191,7 +191,7 @@ const Order = () => {
                     <Row gutter={[20, 20]}>
                         <Col md={18} xs={24}>
                             {carts?.map((item) => {
-                                const currentBookPrice = item?.detail?.price * item.quantity ?? 0;
+                                const currentBookPrice = item?.detail?.price * item.quantity || 0;
                                 return (
                                     <div className={clsx(styles.order_book)} key={item.id}>
                                         <div className={clsx(styles.book_content)}>
