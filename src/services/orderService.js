@@ -19,3 +19,12 @@ export const getHistoryOrder = async () => {
         throw Error(error);
     }
 };
+
+export const getAllOrder = async () => {
+    try {
+        const res = await request.get('order/list-order');
+        return res;
+    } catch (error) {
+        throw Error(error);
+    }
+};

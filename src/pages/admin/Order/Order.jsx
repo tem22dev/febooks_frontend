@@ -1,57 +1,79 @@
 import { useEffect, useState } from 'react';
 import clsx from 'clsx';
-import { Layout, Table } from 'antd';
+import { Layout, Table, Select, Tag } from 'antd';
 import qs from 'qs';
+import moment from 'moment';
 
 import DetailOrder from './DetailOrder';
 import styles from './Order.module.scss';
+import * as orderService from '../../../services/orderService';
 
 function Order() {
     const { Content } = Layout;
-
     const [openDetailOrder, setOpenDetailOrder] = useState(false);
-
-    const [data, setData] = useState();
+    const [dataOrder, setDataOrder] = useState([]);
+    const [order, setOrder] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [tableParams, setTableParams] = useState({
-        pagination: {
-            current: 1,
-            pageSize: 10,
-        },
-    });
 
-    const closeDetailOrder = () => {
-        setOpenDetailOrder(false);
-    };
+    useEffect(() => {
+        const fetchDataOrder = async () => {
+            setLoading(true);
+            const res = await orderService.getAllOrder();
+            if (res && res.data) {
+                const data = res.data.map((item) => ({
+                    idOrder: item.id,
+                    idUser: item.UserID,
+                    updatedAt: item.updatedAt,
+                    totalPrice: item.totalPrice,
+                    status: item.status,
+                    phone: item.phone,
+                    deliveryAddress: item.deliveryAddress,
+                    fullname: item.User.fullname,
+                    createdAt: item.createdAt,
+                    orderDetail: item.OrderDetails,
+                }));
 
-    // Handle Detail Order
-    const showDetailOrder = () => {
-        setOpenDetailOrder(true);
+                setDataOrder(data);
+            }
+            setLoading(false);
+        };
+
+        fetchDataOrder();
+    }, []);
+
+    // Update status order
+    const handleChangeStatusOrder = (value) => {
+        console.log(`selected ${value}`);
     };
 
     const columns = [
         {
-            title: 'Mã đơn hàng',
-            dataIndex: 'name',
-            sorter: true,
-            render: (name) => (
-                <a onClick={showDetailOrder}>
-                    {name.first} {name.last}
+            title: '#',
+            dataIndex: '#',
+            render: (name, record, index) => index + 1,
+        },
+        {
+            title: 'Mã đơn',
+            width: '8%',
+            dataIndex: 'idOrder',
+            render: (text, record) => (
+                <a
+                    onClick={() => {
+                        setOpenDetailOrder(true);
+                        setOrder(record);
+                    }}
+                >
+                    {text}
                 </a>
             ),
         },
         {
             title: 'Người đặt',
-            dataIndex: 'gender',
-            filters: [
-                { text: 'Male', value: 'male' },
-                { text: 'Female', value: 'female' },
-            ],
-            width: '20%',
+            dataIndex: 'fullname',
         },
         {
             title: 'Địa chỉ',
-            dataIndex: 'address',
+            dataIndex: 'deliveryAddress',
         },
         {
             title: 'Số điện thoại',
@@ -59,63 +81,36 @@ function Order() {
         },
         {
             title: 'Tổng đơn hàng',
-            dataIndex: 'sumPrice',
+            dataIndex: 'totalPrice',
+            render: (text) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(text),
         },
         {
             title: 'Trạng thái',
-            dataIndex: 'sumPrice',
-        },
-        {
-            title: 'Giao hàng',
-            dataIndex: 'sumPrice',
+            dataIndex: 'status',
+            render: (text) => (
+                <Select
+                    defaultValue={text}
+                    style={{ width: '140px' }}
+                    onChange={handleChangeStatusOrder}
+                    options={[
+                        { value: 0, label: <Tag color="#f50">Huỷ đơn</Tag> },
+                        { value: 1, label: <Tag color="#108ee9">Chờ nhận hàng</Tag> },
+                        { value: 2, label: <Tag color="#87d068">Đã giao hàng</Tag> },
+                    ]}
+                />
+            ),
         },
         {
             title: 'Ngày đặt',
-            dataIndex: 'createAt',
+            dataIndex: 'createdAt',
+            defaultSortOrder: 'descend',
+            sorter: {
+                compare: (a, b) => moment(a.createdAt).unix() - moment(b.createdAt).unix(),
+                multiple: 1,
+            },
+            render: (date) => moment(date).format('DD-MM-YYYY hh:mm:ss'),
         },
     ];
-
-    const getRandomuserParams = (params) => ({
-        results: params.pagination?.pageSize,
-        page: params.pagination?.current,
-        ...params,
-    });
-
-    const fetchData = () => {
-        setLoading(true);
-        fetch(`https://randomuser.me/api?${qs.stringify(getRandomuserParams(tableParams))}`)
-            .then((res) => res.json())
-            .then(({ results }) => {
-                setData(results);
-                setLoading(false);
-                setTableParams({
-                    ...tableParams,
-                    pagination: {
-                        ...tableParams.pagination,
-                        total: 200,
-                        // 200 is mock data, you should read it from server
-                        // total: data.totalCount,
-                    },
-                });
-            });
-    };
-
-    useEffect(() => {
-        fetchData();
-    }, [tableParams.pagination?.current, tableParams.pagination?.pageSize]);
-
-    const handleTableChange = (pagination, filters, sorter) => {
-        setTableParams({
-            pagination,
-            filters,
-            ...sorter,
-        });
-
-        // `dataSource` is useless since `pageSize` changed
-        if (pagination.pageSize !== tableParams.pagination?.pageSize) {
-            setData([]);
-        }
-    };
 
     return (
         <>
@@ -123,16 +118,22 @@ function Order() {
                 <div className={clsx(styles.wrapper_table)}>
                     <Table
                         columns={columns}
-                        rowKey={(record) => record.login.uuid}
-                        dataSource={data}
-                        pagination={tableParams.pagination}
+                        rowKey={(record) => record.idOrder}
+                        dataSource={dataOrder}
                         loading={loading}
-                        onChange={handleTableChange}
-                        title={() => 'Danh sách đơn hàng'}
+                        pagination={{
+                            showSizeChanger: true,
+                            showTotal: (total, range) => (
+                                <div>
+                                    {range[0]}-{range[1]} trên {total} dòng
+                                </div>
+                            ),
+                        }}
+                        title={() => <h1 style={{ fontSize: '1.6rem', margin: 0 }}>Danh sách đơn hàng</h1>}
                     />
                 </div>
             </Content>
-            <DetailOrder show={openDetailOrder} onClose={closeDetailOrder} />
+            <DetailOrder data={order} show={openDetailOrder} onClose={() => setOpenDetailOrder(false)} />
         </>
     );
 }
