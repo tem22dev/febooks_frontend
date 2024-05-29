@@ -1,8 +1,18 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { DashboardOutlined, BookOutlined, UsergroupAddOutlined, DollarOutlined } from '@ant-design/icons';
 import { Layout, Menu, Avatar, Space } from 'antd';
 import clsx from 'clsx';
+import { LiaUserEditSolid } from 'react-icons/lia';
+import { TfiBookmarkAlt } from 'react-icons/tfi';
+import { HiOutlineLanguage } from 'react-icons/hi2';
+import { MdOutlineAddHomeWork } from 'react-icons/md';
+import {
+    DashboardOutlined,
+    BookOutlined,
+    UsergroupAddOutlined,
+    DollarOutlined,
+    TruckOutlined,
+} from '@ant-design/icons';
 
 import styles from './Sidebar.module.scss';
 import images from '../../../../assets/images';
@@ -16,7 +26,7 @@ function Sidebar() {
 
     const items = [
         {
-            key: 'dashboard',
+            key: '/admin/dash',
             icon: <DashboardOutlined />,
             label: <Link to="/admin/dash">Bảng điều khiển</Link>,
         },
@@ -26,36 +36,49 @@ function Sidebar() {
             label: 'Quản lý sách',
             children: [
                 {
-                    key: 'book-sub-1',
-                    label: <Link to="/admin/dash/books">Danh sách</Link>,
+                    key: '/admin/dash/books',
+                    label: <Link to="/admin/dash/books">Sách</Link>,
                 },
                 {
-                    key: 'book-sub-2',
+                    key: '/admin/dash/books/add',
                     label: <Link to="/admin/dash/books/add">Thêm sách</Link>,
                 },
             ],
         },
         {
-            key: 'user',
-            icon: <UsergroupAddOutlined />,
-            label: 'Quản lý người dùng',
-            children: [
-                {
-                    key: 'user-sub-1',
-                    label: <Link to="/admin/dash/users">CRUD Users</Link>,
-                },
-            ],
+            key: '/admin/dash/author',
+            icon: <LiaUserEditSolid />,
+            label: <Link to="/admin/dash/author">Tác giả</Link>,
         },
         {
-            key: 'order',
+            key: '/admin/dash/genre',
+            icon: <TfiBookmarkAlt />,
+            label: <Link to="/admin/dash/genre">Thể loại sách</Link>,
+        },
+        {
+            key: '/admin/dash/language',
+            icon: <HiOutlineLanguage />,
+            label: <Link to="/admin/dash/language">Ngôn ngữ</Link>,
+        },
+        {
+            key: '/admin/dash/publisher',
+            icon: <MdOutlineAddHomeWork />,
+            label: <Link to="/admin/dash/publisher">Nhà xuất bản</Link>,
+        },
+        {
+            key: '/admin/dash/supplier',
+            icon: <TruckOutlined />,
+            label: <Link to="/admin/dash/supplier">Nhà cung cấp</Link>,
+        },
+        {
+            key: '/admin/dash/orders',
             icon: <DollarOutlined />,
-            label: 'Quản lý đơn hàng',
-            children: [
-                {
-                    key: 'order-sub-1',
-                    label: <Link to="/admin/dash/orders">CRUD Orders</Link>,
-                },
-            ],
+            label: <Link to="/admin/dash/orders">Quản lý đơn hàng</Link>,
+        },
+        {
+            key: '/admin/dash/users',
+            icon: <UsergroupAddOutlined />,
+            label: <Link to="/admin/dash/users">Quản lý người dùng</Link>,
         },
     ];
 
@@ -99,7 +122,13 @@ function Sidebar() {
                 </Space>
                 {app.isCollapsedSidebar || <p className={styles.heading}>Febooks Admin</p>}
             </div>
-            <Menu theme="light" mode="inline" defaultSelectedKeys={['dashboard']} items={listItem} />
+            <Menu
+                theme="light"
+                mode="inline"
+                defaultSelectedKeys={['/admin/dash']}
+                selectedKeys={[location.pathname]}
+                items={listItem}
+            ></Menu>
         </Sider>
     );
 }

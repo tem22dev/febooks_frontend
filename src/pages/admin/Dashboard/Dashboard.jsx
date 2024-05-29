@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Layout, theme, Card, Row, Col, Statistic } from 'antd';
+import { Layout, Card, Row, Col, Statistic } from 'antd';
 import clsx from 'clsx';
 import CountUp from 'react-countup';
 

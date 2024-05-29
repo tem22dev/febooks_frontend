@@ -17,6 +17,11 @@ import AddBook from '../pages/Admin/Book/AddBook';
 import UpdateBook from '../pages/Admin/Book/UpdateBook';
 import User from '../pages/Admin/User';
 import Order from '../pages/Admin/Order';
+import Author from '../pages/Admin/Author';
+import Genre from '../pages/Admin/Genre';
+import Language from '../pages/Admin/Language';
+import Publisher from '../pages/Admin/Publisher';
+import Supplier from '../pages/Admin/Supplier';
 // import Login from '../pages/Admin/Login';
 
 // Public routes
@@ -37,6 +42,11 @@ const privateRoutes = [
     { path: config.routes.editBook, component: UpdateBook },
     { path: config.routes.user, component: User },
     { path: config.routes.order, component: Order },
+    { path: config.routes.author, component: Author },
+    { path: config.routes.genre, component: Genre },
+    { path: config.routes.language, component: Language },
+    { path: config.routes.publisher, component: Publisher },
+    { path: config.routes.supplier, component: Supplier },
 ];
 
 export { publicRoutes, privateRoutes };
