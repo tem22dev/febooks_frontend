@@ -11,6 +11,11 @@ const routes = {
     editBook: 'admin/dash/books/edit',
     user: 'admin/dash/users',
     order: 'admin/dash/orders',
+    author: 'admin/dash/author',
+    genre: 'admin/dash/genre',
+    language: 'admin/dash/language',
+    publisher: 'admin/dash/publisher',
+    supplier: 'admin/dash/supplier',
     // dashAuth: 'admin/auth/login',
 };
 

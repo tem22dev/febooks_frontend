@@ -50,9 +50,13 @@ function History() {
             title: 'Trạng thái',
             dataIndex: 'status',
             render: (text) => {
-                let color = text === true ? 'green' : 'red';
-                text = text === true ? 'Thành công' : 'Thất bại';
-                return <Tag color={color}>{text}</Tag>;
+                return text === 0 ? (
+                    <Tag color="#f50">Huỷ đơn</Tag>
+                ) : text === 1 ? (
+                    <Tag color="#108ee9">Chờ nhận hàng</Tag>
+                ) : (
+                    <Tag color="#87d068">Đã giao hàng</Tag>
+                );
             },
         },
         {
