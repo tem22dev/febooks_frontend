@@ -53,9 +53,9 @@
 
         button {
             margin-top: 15px;
-            background-color: #ee4d2d;
+            background-color: #1677ff;
             color: #fff;
-            border: 1px solid #ee4d2d;
+            border: 1px solid #1677ff;
             box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.03);
             cursor: pointer;
             border-radius: 3px;
@@ -64,7 +64,7 @@
             padding: 0 20px;
 
             &:hover {
-                background-color: #e45b3f;
+                opacity: 0.8;
             }
         }
     }

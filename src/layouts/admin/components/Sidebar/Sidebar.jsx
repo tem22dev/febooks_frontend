@@ -6,12 +6,16 @@ import { LiaUserEditSolid } from 'react-icons/lia';
 import { TfiBookmarkAlt } from 'react-icons/tfi';
 import { HiOutlineLanguage } from 'react-icons/hi2';
 import { MdOutlineAddHomeWork } from 'react-icons/md';
+import { SlUserFollowing } from 'react-icons/sl';
+import { GrSystem } from 'react-icons/gr';
+import { BsSliders } from 'react-icons/bs';
 import {
     DashboardOutlined,
     BookOutlined,
     UsergroupAddOutlined,
     DollarOutlined,
     TruckOutlined,
+    HomeOutlined,
 } from '@ant-design/icons';
 
 import styles from './Sidebar.module.scss';
@@ -26,6 +30,15 @@ function Sidebar() {
 
     const items = [
         {
+            key: '/',
+            icon: <HomeOutlined />,
+            label: (
+                <Link to="/" target="_blank">
+                    Trang chủ
+                </Link>
+            ),
+        },
+        {
             key: '/admin/dash',
             icon: <DashboardOutlined />,
             label: <Link to="/admin/dash">Bảng điều khiển</Link>,
@@ -37,38 +50,38 @@ function Sidebar() {
             children: [
                 {
                     key: '/admin/dash/books',
-                    label: <Link to="/admin/dash/books">Sách</Link>,
+                    label: <Link to="/admin/dash/books">Tất cả sách</Link>,
                 },
                 {
                     key: '/admin/dash/books/add',
                     label: <Link to="/admin/dash/books/add">Thêm sách</Link>,
                 },
+                {
+                    key: '/admin/dash/author',
+                    icon: <LiaUserEditSolid />,
+                    label: <Link to="/admin/dash/author">Tác giả</Link>,
+                },
+                {
+                    key: '/admin/dash/genre',
+                    icon: <TfiBookmarkAlt />,
+                    label: <Link to="/admin/dash/genre">Thể loại sách</Link>,
+                },
+                {
+                    key: '/admin/dash/language',
+                    icon: <HiOutlineLanguage />,
+                    label: <Link to="/admin/dash/language">Ngôn ngữ</Link>,
+                },
+                {
+                    key: '/admin/dash/publisher',
+                    icon: <MdOutlineAddHomeWork />,
+                    label: <Link to="/admin/dash/publisher">Nhà xuất bản</Link>,
+                },
+                {
+                    key: '/admin/dash/supplier',
+                    icon: <TruckOutlined />,
+                    label: <Link to="/admin/dash/supplier">Nhà cung cấp</Link>,
+                },
             ],
-        },
-        {
-            key: '/admin/dash/author',
-            icon: <LiaUserEditSolid />,
-            label: <Link to="/admin/dash/author">Tác giả</Link>,
-        },
-        {
-            key: '/admin/dash/genre',
-            icon: <TfiBookmarkAlt />,
-            label: <Link to="/admin/dash/genre">Thể loại sách</Link>,
-        },
-        {
-            key: '/admin/dash/language',
-            icon: <HiOutlineLanguage />,
-            label: <Link to="/admin/dash/language">Ngôn ngữ</Link>,
-        },
-        {
-            key: '/admin/dash/publisher',
-            icon: <MdOutlineAddHomeWork />,
-            label: <Link to="/admin/dash/publisher">Nhà xuất bản</Link>,
-        },
-        {
-            key: '/admin/dash/supplier',
-            icon: <TruckOutlined />,
-            label: <Link to="/admin/dash/supplier">Nhà cung cấp</Link>,
         },
         {
             key: '/admin/dash/orders',
@@ -79,6 +92,27 @@ function Sidebar() {
             key: '/admin/dash/users',
             icon: <UsergroupAddOutlined />,
             label: <Link to="/admin/dash/users">Quản lý người dùng</Link>,
+        },
+        {
+            key: '/admin/dash/following',
+            icon: <SlUserFollowing />,
+            label: <Link to="/admin/dash/following">Lượng theo dõi</Link>,
+        },
+        {
+            key: '/admin/dash/sliders',
+            icon: <BsSliders />,
+            label: <Link to="/admin/dash/sliders">Sliders</Link>,
+        },
+        {
+            key: 'system',
+            icon: <GrSystem />,
+            label: 'Quản lý hệ thống',
+            children: [
+                {
+                    key: '/admin/dash/logo',
+                    label: <Link to="/admin/dash/logo">Logo</Link>,
+                },
+            ],
         },
     ];
 

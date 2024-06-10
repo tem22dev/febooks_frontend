@@ -2,11 +2,13 @@ import clsx from 'clsx';
 import { FilterTwoTone, ReloadOutlined } from '@ant-design/icons';
 import { Row, Col, Form, Checkbox, Divider, InputNumber, Button, Rate, Radio, Pagination, Spin } from 'antd';
 import { useCallback, useEffect, useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import React from 'react';
 
 import * as bookService from '../../services/bookService';
+import Slider from '../../components/Slider';
 import styles from './Home.module.scss';
+import Footer from '../../layouts/components/Footer';
 
 const ENV = import.meta.env;
 
@@ -128,181 +130,234 @@ function Home() {
     };
 
     return (
-        <div style={{ backgroundColor: '#f0f0f0', padding: '14px 0' }}>
-            <div className={clsx(styles.container)}>
-                <Row gutter={[16, 16]}>
-                    <Col lg={6} sm={0} xs={0}>
-                        <div style={{ padding: '14px', background: '#fff', borderRadius: 5 }}>
-                            <div
-                                style={{
-                                    display: 'flex',
-                                    justifyContent: 'space-between',
-                                    paddingBottom: '10px',
-                                    borderBottom: '1px solid #eee',
-                                }}
-                            >
-                                <span>
-                                    {' '}
-                                    <FilterTwoTone />
-                                    <span style={{ fontWeight: 500 }}> Bộ lọc tìm kiếm</span>
-                                </span>
-                                <ReloadOutlined
-                                    title="Reset"
-                                    onClick={() => {
-                                        form.resetFields();
-                                        setFilter('');
-                                    }}
-                                />
-                            </div>
-                            <Form onFinish={onFinish} form={form} onValuesChange={handleChangeFilter}>
-                                <Form.Item name="category" label="Danh mục sản phẩm" labelCol={{ span: 24 }}>
-                                    <Checkbox.Group>
-                                        <Row>
-                                            {listCategory?.map((item, index) => (
-                                                <Col span={24} key={`index-${index}`} style={{ padding: '7px 0' }}>
-                                                    <Checkbox value={item.value}>{item.label}</Checkbox>
-                                                </Col>
-                                            ))}
-                                        </Row>
-                                    </Checkbox.Group>
-                                </Form.Item>
-                                <Divider />
-                                <Form.Item label="Khoảng giá" labelCol={{ span: 24 }}>
-                                    <Row gutter={[10, 10]} style={{ width: '100%' }}>
-                                        <Col xl={11} md={24}>
-                                            <Form.Item name={['range', 'from']}>
-                                                <InputNumber
-                                                    name="from"
-                                                    min={0}
-                                                    placeholder="đ TỪ"
-                                                    formatter={(value) =>
-                                                        `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                                                    }
-                                                    style={{ width: '100%' }}
+        <>
+            <div style={{ backgroundColor: '#f5f5fa', padding: '16px 10px' }}>
+                <div className={clsx(styles.container)}>
+                    <div style={{ padding: '2px 0 18px' }}>
+                        <Row gutter={[10]}>
+                            <Col lg={16}>
+                                <div className={clsx(styles.slider_home)}>
+                                    <Slider />
+                                </div>
+                            </Col>
+                            <Col lg={8}>
+                                <Row gutter={[4, 4]}>
+                                    <Col lg={24}>
+                                        <div className={clsx(styles.img_banner)} style={{ marginBottom: '8px' }}>
+                                            <Link to="#!" className={clsx(styles.banner_link)}>
+                                                <img
+                                                    className={clsx(styles.img)}
+                                                    src="https://cdn0.fahasa.com/media/wysiwyg/Thang-06-2024/Doitac_0624_Sub_392x156.jpg"
+                                                    alt=""
                                                 />
-                                            </Form.Item>
-                                        </Col>
-                                        <Col xl={2} md={0}>
-                                            <div> - </div>
-                                        </Col>
-                                        <Col xl={11} md={24}>
-                                            <Form.Item name={['range', 'to']}>
-                                                <InputNumber
-                                                    name="to"
-                                                    min={0}
-                                                    placeholder="đ ĐẾN"
-                                                    formatter={(value) =>
-                                                        `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                                                    }
-                                                    style={{ width: '100%' }}
-                                                />
-                                            </Form.Item>
-                                        </Col>
-                                    </Row>
-                                    <div>
-                                        <Button onClick={() => form.submit()} style={{ width: '100%' }} type="primary">
-                                            Áp dụng
-                                        </Button>
-                                    </div>
-                                </Form.Item>
-                                <Divider />
-                                <Form.Item label="Đánh giá" labelCol={{ span: 24 }}>
-                                    <div>
-                                        <Rate value={5} disabled style={{ color: '#ffce3d', fontSize: 15 }} />
-                                        <span className={clsx(styles.ant_rate_text)}></span>
-                                    </div>
-                                    <div>
-                                        <Rate value={4} disabled style={{ color: '#ffce3d', fontSize: 15 }} />
-                                        <span className={clsx(styles.ant_rate_text)}>trở lên</span>
-                                    </div>
-                                    <div>
-                                        <Rate value={3} disabled style={{ color: '#ffce3d', fontSize: 15 }} />
-                                        <span className={clsx(styles.ant_rate_text)}>trở lên</span>
-                                    </div>
-                                    <div>
-                                        <Rate value={2} disabled style={{ color: '#ffce3d', fontSize: 15 }} />
-                                        <span className={clsx(styles.ant_rate_text)}>trở lên</span>
-                                    </div>
-                                    <div>
-                                        <Rate value={1} disabled style={{ color: '#ffce3d', fontSize: 15 }} />
-                                        <span className={clsx(styles.ant_rate_text)}>trở lên</span>
-                                    </div>
-                                </Form.Item>
-                            </Form>
-                        </div>
-                    </Col>
-
-                    <Col lg={18} xs={24}>
-                        <Spin spinning={isLoading} tip="Đang tải...">
-                            <div style={{ padding: '2px 14px 14px', background: '#fff', borderRadius: 5 }}>
-                                <Row>
-                                    <Radio.Group
-                                        onChange={(e) => {
-                                            setSortQuery(e.target.value);
-                                        }}
-                                        value={sortQuery}
-                                        style={{ padding: '8px 0' }}
-                                    >
-                                        <Radio.Button value="sort=-quantitySold">Bán chạy</Radio.Button>
-                                        <Radio.Button value="sort=-price">Giá cao đến thấp</Radio.Button>
-                                        <Radio.Button value="sort=price">Giá thấp đến cao</Radio.Button>
-                                        <Radio.Button value="sort=-updatedAt">Mới nhất</Radio.Button>
-                                    </Radio.Group>
+                                            </Link>
+                                        </div>
+                                    </Col>
                                 </Row>
-                                <Row className={clsx(styles.customize_row)}>
-                                    {listBook?.map((item, index) => (
-                                        <div className={clsx(styles.column)} key={`book-${index}`}>
-                                            <div className={clsx(styles.wrapper)}>
-                                                <div
-                                                    className={clsx(styles.thumbnail)}
-                                                    onClick={() => handleRedirectBook(item)}
-                                                >
-                                                    <img
-                                                        src={`${ENV.VITE_BASE_URL_BACKEND}/images/books/${item.thumbnail}`}
-                                                        alt={`${item.title}`}
+                                <Row gutter={[4, 10]}>
+                                    <Col lg={24}>
+                                        <div className={clsx(styles.img_banner)}>
+                                            <Link to="#!" className={clsx(styles.banner_link)}>
+                                                <img
+                                                    className={clsx(styles.img)}
+                                                    src="https://cdn0.fahasa.com/media/wysiwyg/Thang-06-2024/Kotienmat_0624_Sub_392x1567.jpg"
+                                                    alt=""
+                                                />
+                                            </Link>
+                                        </div>
+                                    </Col>
+                                </Row>
+                            </Col>
+                        </Row>
+                    </div>
+                    <Row gutter={[22, 22]}>
+                        <Col lg={5} sm={0} xs={0}>
+                            <div style={{ padding: '14px', background: '#fff', borderRadius: 5 }}>
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        paddingBottom: '10px',
+                                        borderBottom: '1px solid #eee',
+                                    }}
+                                >
+                                    <span>
+                                        {' '}
+                                        <FilterTwoTone />
+                                        <span style={{ fontWeight: 500 }}> Bộ lọc tìm kiếm</span>
+                                    </span>
+                                    <ReloadOutlined
+                                        title="Reset"
+                                        onClick={() => {
+                                            form.resetFields();
+                                            setFilter('');
+                                        }}
+                                    />
+                                </div>
+                                <Form onFinish={onFinish} form={form} onValuesChange={handleChangeFilter}>
+                                    <Form.Item name="category" label="Danh mục sản phẩm" labelCol={{ span: 24 }}>
+                                        <Checkbox.Group>
+                                            <Row>
+                                                {listCategory?.map((item, index) => (
+                                                    <Col span={24} key={`index-${index}`} style={{ padding: '7px 0' }}>
+                                                        <Checkbox value={item.value}>{item.label}</Checkbox>
+                                                    </Col>
+                                                ))}
+                                            </Row>
+                                        </Checkbox.Group>
+                                    </Form.Item>
+                                    <Divider />
+                                    <Form.Item label="Khoảng giá" labelCol={{ span: 24 }}>
+                                        <Row gutter={[10, 10]} style={{ width: '100%' }}>
+                                            <Col xl={11} md={24}>
+                                                <Form.Item name={['range', 'from']}>
+                                                    <InputNumber
+                                                        name="from"
+                                                        min={0}
+                                                        placeholder="đ TỪ"
+                                                        formatter={(value) =>
+                                                            `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                                                        }
+                                                        style={{ width: '100%' }}
                                                     />
-                                                </div>
-                                                <div
-                                                    className={clsx(styles.text)}
-                                                    title={item.title}
-                                                    onClick={() => handleRedirectBook(item)}
-                                                >
-                                                    {item.title}
-                                                </div>
-                                                <div className={clsx(styles.price)}>
-                                                    {new Intl.NumberFormat('vi-VN', {
-                                                        style: 'currency',
-                                                        currency: 'VND',
-                                                    }).format(item?.price ?? 0)}
-                                                </div>
-                                                <div className={clsx(styles.rating)}>
-                                                    <Rate
-                                                        value={5}
-                                                        disabled
-                                                        style={{ color: '#ffce3d', fontSize: 10 }}
+                                                </Form.Item>
+                                            </Col>
+                                            <Col xl={2} md={0}>
+                                                <div> - </div>
+                                            </Col>
+                                            <Col xl={11} md={24}>
+                                                <Form.Item name={['range', 'to']}>
+                                                    <InputNumber
+                                                        name="to"
+                                                        min={0}
+                                                        placeholder="đ ĐẾN"
+                                                        formatter={(value) =>
+                                                            `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                                                        }
+                                                        style={{ width: '100%' }}
                                                     />
-                                                    <span>Đã bán {item.quantitySold}</span>
+                                                </Form.Item>
+                                            </Col>
+                                        </Row>
+                                        <div>
+                                            <Button
+                                                onClick={() => form.submit()}
+                                                style={{ width: '100%' }}
+                                                type="primary"
+                                            >
+                                                Áp dụng
+                                            </Button>
+                                        </div>
+                                    </Form.Item>
+                                    <Divider />
+                                    <Form.Item label="Đánh giá" labelCol={{ span: 24 }}>
+                                        <div>
+                                            <Rate value={5} disabled style={{ color: '#ffce3d', fontSize: 15 }} />
+                                            <span className={clsx(styles.ant_rate_text)}></span>
+                                        </div>
+                                        <div>
+                                            <Rate value={4} disabled style={{ color: '#ffce3d', fontSize: 15 }} />
+                                            <span className={clsx(styles.ant_rate_text)}>trở lên</span>
+                                        </div>
+                                        <div>
+                                            <Rate value={3} disabled style={{ color: '#ffce3d', fontSize: 15 }} />
+                                            <span className={clsx(styles.ant_rate_text)}>trở lên</span>
+                                        </div>
+                                        <div>
+                                            <Rate value={2} disabled style={{ color: '#ffce3d', fontSize: 15 }} />
+                                            <span className={clsx(styles.ant_rate_text)}>trở lên</span>
+                                        </div>
+                                        <div>
+                                            <Rate value={1} disabled style={{ color: '#ffce3d', fontSize: 15 }} />
+                                            <span className={clsx(styles.ant_rate_text)}>trở lên</span>
+                                        </div>
+                                    </Form.Item>
+                                </Form>
+                            </div>
+                        </Col>
+
+                        <Col lg={19} xs={24}>
+                            <Spin spinning={isLoading} tip="Đang tải...">
+                                <div style={{ padding: '2px 14px 14px', background: '#fff', borderRadius: 5 }}>
+                                    <Row>
+                                        <Radio.Group
+                                            onChange={(e) => {
+                                                setSortQuery(e.target.value);
+                                            }}
+                                            value={sortQuery}
+                                            style={{ padding: '8px 0' }}
+                                        >
+                                            <Radio.Button value="sort=-quantitySold">Bán chạy</Radio.Button>
+                                            <Radio.Button value="sort=-price">Giá cao đến thấp</Radio.Button>
+                                            <Radio.Button value="sort=price">Giá thấp đến cao</Radio.Button>
+                                            <Radio.Button value="sort=-updatedAt">Mới nhất</Radio.Button>
+                                        </Radio.Group>
+                                    </Row>
+                                    <Row className={clsx(styles.customize_row)}>
+                                        {listBook?.map((item, index) => (
+                                            <div className={clsx(styles.column)} key={`book-${index}`}>
+                                                <div className={clsx(styles.wrapper)}>
+                                                    <div
+                                                        className={clsx(styles.thumbnail)}
+                                                        onClick={() => handleRedirectBook(item)}
+                                                    >
+                                                        <img
+                                                            src={`${ENV.VITE_BASE_URL_BACKEND}/images/books/${item.thumbnail}`}
+                                                            alt={`${item.title}`}
+                                                        />
+                                                    </div>
+                                                    <div
+                                                        className={clsx(styles.text)}
+                                                        title={item.title}
+                                                        onClick={() => handleRedirectBook(item)}
+                                                    >
+                                                        {item.title}
+                                                    </div>
+                                                    <div className={clsx(styles.price)}>
+                                                        {new Intl.NumberFormat('vi-VN', {
+                                                            style: 'currency',
+                                                            currency: 'VND',
+                                                        }).format(item?.price ?? 0)}
+                                                    </div>
+                                                    <div className={clsx(styles.rating)}>
+                                                        <Rate
+                                                            value={5}
+                                                            disabled
+                                                            style={{ color: '#ffce3d', fontSize: 10 }}
+                                                        />
+                                                        <span>Đã bán {item.quantitySold}</span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    ))}
-                                </Row>
-                                <div style={{ marginTop: 30 }}></div>
-                                <Row style={{ display: 'flex', justifyContent: 'center' }}>
-                                    <Pagination
-                                        current={current}
-                                        total={total}
-                                        pageSize={pageSize}
-                                        responsive
-                                        onChange={handleOnchangePage}
-                                    />
-                                </Row>
-                            </div>
-                        </Spin>
-                    </Col>
-                </Row>
+                                        ))}
+                                    </Row>
+                                    <div style={{ marginTop: 30 }}></div>
+                                    <Row style={{ display: 'flex', justifyContent: 'center' }}>
+                                        <Pagination
+                                            current={current}
+                                            total={total}
+                                            pageSize={pageSize}
+                                            responsive
+                                            onChange={handleOnchangePage}
+                                        />
+                                    </Row>
+                                </div>
+                            </Spin>
+                        </Col>
+                    </Row>
+                </div>
             </div>
-        </div>
+            <div style={{ background: '#f5f5fa', padding: '0px 20px 16px' }}>
+                <div
+                    className={clsx(styles.book)}
+                    style={{ maxWidth: 1440, margin: '0 auto', minHeight: 'calc(100vh - 150px)' }}
+                >
+                    <div style={{ padding: '20px', background: '#fff', borderRadius: 5 }}>
+                        <Footer />
+                    </div>
+                </div>
+            </div>
+        </>
     );
 }
 

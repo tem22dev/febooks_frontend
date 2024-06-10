@@ -22,6 +22,8 @@ import Genre from '../pages/Admin/Genre';
 import Language from '../pages/Admin/Language';
 import Publisher from '../pages/Admin/Publisher';
 import Supplier from '../pages/Admin/Supplier';
+import Slider from '../pages/Admin/Slider';
+import Following from '../pages/Admin/Following';
 // import Login from '../pages/Admin/Login';
 
 // Public routes
@@ -47,6 +49,8 @@ const privateRoutes = [
     { path: config.routes.language, component: Language },
     { path: config.routes.publisher, component: Publisher },
     { path: config.routes.supplier, component: Supplier },
+    { path: config.routes.slider, component: Slider },
+    { path: config.routes.following, component: Following },
 ];
 
 export { publicRoutes, privateRoutes };
