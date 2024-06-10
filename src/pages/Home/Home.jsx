@@ -21,6 +21,8 @@ function Home() {
     const [isLoading, setIsLoading] = useState(false);
     const [filter, setFilter] = useState('');
     const [sortQuery, setSortQuery] = useState('sort=-quantitySold');
+    const [imgTwo, setImgTwo] = useState({});
+    const [imgThree, setImgThree] = useState({});
 
     const [form] = Form.useForm();
     const navigate = useNavigate();
@@ -137,17 +139,17 @@ function Home() {
                         <Row gutter={[10]}>
                             <Col lg={16}>
                                 <div className={clsx(styles.slider_home)}>
-                                    <Slider />
+                                    <Slider setImgThree={setImgThree} setImgTwo={setImgTwo} />
                                 </div>
                             </Col>
                             <Col lg={8}>
                                 <Row gutter={[4, 4]}>
                                     <Col lg={24}>
                                         <div className={clsx(styles.img_banner)} style={{ marginBottom: '8px' }}>
-                                            <Link to="#!" className={clsx(styles.banner_link)}>
+                                            <Link to={imgTwo?.url ?? '#!'} className={clsx(styles.banner_link)}>
                                                 <img
                                                     className={clsx(styles.img)}
-                                                    src="https://cdn0.fahasa.com/media/wysiwyg/Thang-06-2024/Doitac_0624_Sub_392x156.jpg"
+                                                    src={`${ENV.VITE_BASE_URL_BACKEND}/images/sliders/${imgTwo?.filename}`}
                                                     alt=""
                                                 />
                                             </Link>
@@ -157,10 +159,10 @@ function Home() {
                                 <Row gutter={[4, 10]}>
                                     <Col lg={24}>
                                         <div className={clsx(styles.img_banner)}>
-                                            <Link to="#!" className={clsx(styles.banner_link)}>
+                                            <Link to={imgThree?.url ?? '#!'} className={clsx(styles.banner_link)}>
                                                 <img
                                                     className={clsx(styles.img)}
-                                                    src="https://cdn0.fahasa.com/media/wysiwyg/Thang-06-2024/Kotienmat_0624_Sub_392x1567.jpg"
+                                                    src={`${ENV.VITE_BASE_URL_BACKEND}/images/sliders/${imgThree?.filename}`}
                                                     alt=""
                                                 />
                                             </Link>

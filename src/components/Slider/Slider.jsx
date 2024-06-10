@@ -1,18 +1,22 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { GrFormPrevious } from 'react-icons/gr';
 import { MdNavigateNext } from 'react-icons/md';
+import { Link } from 'react-router-dom';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { Navigation, Pagination, Mousewheel, Keyboard, Autoplay, FreeMode } from 'swiper/modules';
 
 import './Slider.scss';
-import { Link } from 'react-router-dom';
+import * as siteService from '../../services/siteService';
 
-export default function Slider() {
+const ENV = import.meta.env;
+
+export default function Slider({ setImgTwo, setImgThree }) {
     const navigationPrevRef = useRef(null);
     const navigationNextRef = useRef(null);
+    const [listSlider, setListSlider] = useState([]);
 
     useEffect(() => {
         // Bắt buộc Swiper cập nhật các nút điều hướng sau khi chúng được mount
@@ -26,28 +30,27 @@ export default function Slider() {
         return () => clearTimeout(timeoutId);
     }, []);
 
-    const listSlider = [
-        {
-            img: 'https://cdn0.fahasa.com/media/magentothem/banner7/DiamondSaiGonBook_0624_Slide_840x320__1.jpg',
-            alt: 'anh 1',
-            url: 'http://localhost:5173/#!',
-        },
-        {
-            img: 'https://cdn0.fahasa.com/media/magentothem/banner7/Steam_T6_Slide_840x320_v2.jpg',
-            alt: 'anh 2',
-            url: 'http://localhost:5173/#!',
-        },
-        {
-            img: 'https://cdn0.fahasa.com/media/magentothem/banner7/BachHoa_SlideBanner_840x320.jpg',
-            alt: 'anh 3',
-            url: 'http://localhost:5173/#!',
-        },
-        {
-            img: 'https://cdn0.fahasa.com/media/magentothem/banner7/Bo0106__840x320_1.jpg',
-            alt: 'anh 4',
-            url: 'http://localhost:5173/#!',
-        },
-    ];
+    useEffect(() => {
+        const fetchListSlider = async () => {
+            const res = await siteService.getAllSlider();
+
+            if (res && res.errCode === 0) {
+                setListSlider(res.data);
+            }
+        };
+
+        fetchListSlider();
+    }, []);
+
+    useEffect(() => {
+        if (listSlider.length) {
+            const imgTwoItem = listSlider.find((item) => item.status === true && item.position === 2);
+            const imgThreeItem = listSlider.find((item) => item.status === true && item.position === 3);
+
+            if (imgTwoItem) setImgTwo(imgTwoItem);
+            if (imgThreeItem) setImgThree(imgThreeItem);
+        }
+    }, [listSlider, setImgTwo, setImgThree]);
 
     return (
         <>
@@ -76,13 +79,22 @@ export default function Slider() {
                     swiper.navigation.update();
                 }}
             >
-                {listSlider?.map((item, index) => (
-                    <SwiperSlide key={index}>
-                        <Link to={item.url} style={{ width: '100%', height: '100%' }}>
-                            <img src={item.img} style={{ width: '100%', height: '100%' }} alt={item.alt} />
-                        </Link>
-                    </SwiperSlide>
-                ))}
+                {listSlider?.map((item, index) => {
+                    if (item.status === true && item.position === 1) {
+                        return (
+                            <SwiperSlide key={index}>
+                                <Link to={item.url} style={{ width: '100%', height: '100%' }}>
+                                    <img
+                                        src={`${ENV.VITE_BASE_URL_BACKEND}/images/sliders/${item.filename}`}
+                                        style={{ width: '100%', height: '100%' }}
+                                        // alt={item.alt}
+                                    />
+                                </Link>
+                            </SwiperSlide>
+                        );
+                    }
+                    return null;
+                })}
 
                 <div ref={navigationPrevRef} className="custom-nav prev">
                     <GrFormPrevious />

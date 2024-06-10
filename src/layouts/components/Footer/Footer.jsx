@@ -1,16 +1,31 @@
-import { Row, Col, Form, Input, Button } from 'antd';
-import { MailOutlined } from '@ant-design/icons';
+import { Row, Col, Form, Input, Button, message, notification } from 'antd';
+
 import './Footer.scss'; // Create this CSS file to handle custom styling
+import * as siteService from '../../../services/siteService';
 
 const Footer = () => {
-    const onFinish = (values) => {
-        console.log('Success:', values);
+    const [form] = Form.useForm();
+
+    const onFinish = async (values) => {
+        if (values?.email) {
+            const res = await siteService.createFollowing(values);
+            if (res && res.errCode === 0) {
+                message.success(res.message);
+            } else {
+                notification.error({
+                    message: 'Đã có lỗi xảy ra',
+                    description: res.errMessage,
+                });
+            }
+            form.setFieldsValue('email', '');
+        }
     };
 
     return (
         <div className="footer">
             <div className="newsletter">
                 <Form
+                    form={form}
                     name="basic"
                     labelCol={{ span: 8 }}
                     wrapperCol={{ span: 16 }}
