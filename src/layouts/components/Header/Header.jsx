@@ -9,11 +9,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { DownOutlined } from '@ant-design/icons';
 import { Dropdown, Space, message, Avatar, Popover } from 'antd';
 import { useNavigate } from 'react-router';
+import { BsEmojiWink } from 'react-icons/bs';
 
 import styles from './Header.module.scss';
 import { callLogout } from '../../../services/authServices';
 import { doLogoutAction } from '../../../redux/account/accountSlice';
 import ManaAccount from '../../../components/ManaAccount';
+import images from '../../../assets/images';
 
 const ENV = import.meta.env;
 
@@ -22,6 +24,7 @@ function Header() {
     const isAuthenticated = useSelector((state) => state.account.isAuthenticated);
     const user = useSelector((state) => state.account.user);
     const carts = useSelector((state) => state.order.carts);
+    const sumPrice = useSelector((state) => state.order.sumPrice);
     const [isModalOpen, setIsModalOpen] = useState(false);
     let total = 0;
 
@@ -68,7 +71,7 @@ function Header() {
     if (user?.role === 'admin') {
         items.unshift({
             label: (
-                <Link to="admin/dash" style={{ cursor: 'pointer' }}>
+                <Link to="/admin/dash" style={{ cursor: 'pointer' }}>
                     Trang quản trị
                 </Link>
             ),
@@ -109,15 +112,23 @@ function Header() {
                     })}
                 </div>
                 <div className={clsx(styles.pop_cart_footer)}>
-                    <div className={clsx(styles.price_total)}>
-                        <span>Tổng cộng</span>
-                        <strong className={clsx(styles.price)}>
-                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(1000000)}{' '}
-                        </strong>
-                    </div>
-                    <button className={clsx(styles.btn_cart)} onClick={() => navigate('/book/order')}>
-                        Xem giỏ hàng
-                    </button>
+                    {carts?.length == 0 ? (
+                        <img src={images.emptyCart} alt="empty cart" style={{ width: '320px', height: '200px' }} />
+                    ) : (
+                        <>
+                            <div className={clsx(styles.price_total)}>
+                                <span>Tổng cộng</span>
+                                <strong className={clsx(styles.price)}>
+                                    {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(
+                                        sumPrice,
+                                    )}{' '}
+                                </strong>
+                            </div>
+                            <button className={clsx(styles.btn_cart)} onClick={() => navigate('/book/order')}>
+                                Xem giỏ hàng
+                            </button>
+                        </>
+                    )}
                 </div>
             </div>
         );
@@ -144,14 +155,14 @@ function Header() {
                             </Link>
                             <Input
                                 className={clsx(styles.input_search)}
-                                placeholder="Basic usage"
-                                prefix={<IoSearchOutline style={{ color: 'rgba(0,0,0,.25)' }} />}
+                                placeholder="Bạn muốn đọc gì hôm nay ?"
+                                prefix={<IoSearchOutline style={{ fontSize: '1.8rem', color: 'rgba(0,0,0,0.4)' }} />}
                             />
                         </div>
                     </div>
                     <nav className={clsx(styles.header_bottom)}>
                         <ul id={clsx(styles.navigation)} className={clsx(styles.navigation)}>
-                            <li className={clsx(styles.navigation_item)} onClick={() => navigate('/book/order')}>
+                            <li className={clsx(styles.navigation_item)}>
                                 <Popover
                                     className={clsx(styles.popover_carts)}
                                     placement="bottom"
@@ -170,8 +181,12 @@ function Header() {
                             </li>
                             <li className={clsx(styles.navigation_item, styles.mobile)}>
                                 {!isAuthenticated ? (
-                                    <span onClick={() => navigate('/auth')} style={{ fontSize: '1.6rem' }}>
-                                        Tài Khoản
+                                    <span
+                                        onClick={() => navigate('/auth')}
+                                        style={{ display: 'flex', alignItems: 'center', fontSize: '1.6rem' }}
+                                    >
+                                        <BsEmojiWink className={clsx(styles.icon_emoji)} />
+                                        <span style={{ marginLeft: '4px' }}>Tài Khoản</span>
                                     </span>
                                 ) : (
                                     <Dropdown menu={{ items }} trigger={['click']}>

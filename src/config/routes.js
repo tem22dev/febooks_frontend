@@ -16,6 +16,8 @@ const routes = {
     language: 'admin/dash/language',
     publisher: 'admin/dash/publisher',
     supplier: 'admin/dash/supplier',
+    slider: 'admin/dash/sliders',
+    following: 'admin/dash/following',
     // dashAuth: 'admin/auth/login',
 };
 

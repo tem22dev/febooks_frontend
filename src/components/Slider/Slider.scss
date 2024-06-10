@@ -1,0 +1,54 @@
+.mySwiper {
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+}
+
+.swiper-slide {
+    text-align: center;
+    font-size: 18px;
+    background: #fff;
+
+    /* Center slide text vertically */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.swiper-slide img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Custom styles for navigation buttons */
+.custom-nav {
+    position: absolute;
+    top: 50%;
+    width: 40px;
+    height: 40px;
+    margin-top: -20px;
+    z-index: 10;
+    cursor: pointer;
+    background-color: #fff;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Add shadow */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.custom-nav.prev {
+    left: 10px; /* Adjust position */
+}
+
+.custom-nav.next {
+    right: 10px; /* Adjust position */
+}
+
+.custom-nav svg {
+    width: 24px;
+    height: 24px;
+    color: #555; /* Change to desired color */
+}

@@ -9,7 +9,7 @@
         margin: 5px 0;
         color: #242424;
         font-size: 24px;
-        font-weight: 300;
+        font-weight: 500;
         line-height: 32px;
         word-break: break-word;
     }
@@ -98,9 +98,9 @@
         button {
             overflow: visible;
             outline: 0;
-            background: #ff57221a;
-            color: #ee4d2d;
-            border: 1px solid #ee4d2d;
+            background: #1677ff;
+            color: #fff;
+            border: 1px solid #1677ff;
             box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.03);
             cursor: pointer;
             border-radius: 3px;
@@ -114,13 +114,14 @@
                 position: relative;
                 overflow: visible;
                 outline: 0;
-                background: #ee4d2d;
+                background: #1677ff;
             }
         }
 
         .cart {
             &:hover {
-                background: #ffc5b22e;
+                background: #1677ff;
+                opacity: 0.8;
             }
 
             span {
@@ -130,7 +131,8 @@
 
         .now {
             &:hover {
-                background: #f05d40;
+                background: #1677ff;
+                opacity: 0.8;
             }
         }
     }

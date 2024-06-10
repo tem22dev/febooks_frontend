@@ -1,0 +1,42 @@
+.footer {
+    // background-color: #f5f5fa;
+}
+
+.newsletter {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    justify-content: center;
+}
+
+.newsletter-input {
+    margin: 0 20px;
+    width: 300px;
+}
+
+.footer-content {
+    margin-bottom: 20px;
+}
+
+.footer-content h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.footer-content p {
+    margin: 5px 0;
+}
+
+.footer-bottom {
+    border-top: 1px solid #eaeaea;
+    padding-top: 10px;
+    font-size: 14px;
+}
+
+.footer-bottom p {
+    margin: 0;
+}
+
+.footer-bottom a {
+    color: #1890ff;
+}

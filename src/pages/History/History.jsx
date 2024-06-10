@@ -70,7 +70,7 @@ function History() {
     ];
 
     return (
-        <div style={{ background: '#efefef', padding: '20px 0' }}>
+        <div style={{ background: '#f5f5fa', padding: '16px 20px' }}>
             <div
                 className={clsx(styles.book)}
                 style={{ maxWidth: 1440, margin: '0 auto', minHeight: 'calc(100vh - 150px)' }}

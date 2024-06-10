@@ -22,6 +22,9 @@ import { useNavigate } from 'react-router-dom';
 import styles from './Order.module.scss';
 import { doUpdateCartAction, doDeleteItemCartAction, doPlaceOrderAction } from '../../redux/order/orderSlice';
 import * as orderService from '../../services/orderService';
+import AddressSelector from '../../components/AddressSelector';
+// import CheckoutForm from '../../components/CheckoutForm';
+// import MomoCheckout from '../../components/MomoCheckout';
 
 const ENV = import.meta.env;
 
@@ -57,6 +60,8 @@ const Order = () => {
 
     const onFinish = async (values) => {
         setIsSubmit(true);
+        const fullAddress = `${values.address}, ${values.fullAddress}`;
+
         const detailOrder = carts.map((item) => {
             return {
                 bookName: item.detail.title,
@@ -68,7 +73,7 @@ const Order = () => {
         const data = {
             userID: user.id,
             name: values.name,
-            deliveryAddress: values.address,
+            deliveryAddress: fullAddress,
             phone: values.phone,
             totalPrice: totalPrice,
             detail: detailOrder,
@@ -89,7 +94,7 @@ const Order = () => {
     };
 
     return (
-        <div className={clsx(styles.container)} style={{ background: '#efefef', padding: '20px 0' }}>
+        <div className={clsx(styles.container)} style={{ background: '#f5f5fa', padding: '16px 20px' }}>
             <div className={clsx(styles.order_container)}>
                 <div className={clsx(styles.steps)}>
                     <Steps
@@ -182,7 +187,13 @@ const Order = () => {
                                     </span>
                                 </div>
                                 <Divider style={{ margin: '10px 0' }} />
-                                <button onClick={() => setCurrentSteps(1)}>Mua Hàng ({carts?.length ?? 0})</button>
+                                {carts?.length === 0 ? (
+                                    <button disabled={true} style={{ cursor: 'default', opacity: 0.5 }}>
+                                        Mua Hàng ({carts?.length ?? 0})
+                                    </button>
+                                ) : (
+                                    <button onClick={() => setCurrentSteps(1)}>Mua Hàng ({carts?.length ?? 0})</button>
+                                )}
                             </div>
                         </Col>
                     </Row>
@@ -237,82 +248,91 @@ const Order = () => {
                                 </Empty>
                             )}
                         </Col>
-                        <Col md={6} xs={24}>
-                            <div className={clsx(styles.order_sum)}>
-                                <Form form={form} name="payment" onFinish={onFinish} layout="vertical">
-                                    <Form.Item
-                                        label="Tên người nhận"
-                                        name="name"
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: 'Vui lòng nhập tên người nhận!',
-                                            },
-                                        ]}
-                                        hasFeedback
-                                        initialValue={user.fullname}
-                                    >
-                                        <Input placeholder="Họ tên" />
-                                    </Form.Item>
+                        {carts.length !== 0 && (
+                            <Col md={6} xs={24}>
+                                <div className={clsx(styles.order_sum)}>
+                                    <Form form={form} name="payment" onFinish={onFinish} layout="vertical">
+                                        <Form.Item
+                                            label="Tên người nhận"
+                                            name="name"
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: 'Vui lòng nhập tên người nhận!',
+                                                },
+                                            ]}
+                                            hasFeedback
+                                            initialValue={user.fullname}
+                                        >
+                                            <Input placeholder="Họ tên" />
+                                        </Form.Item>
 
-                                    <Form.Item
-                                        label="Số điện thoại"
-                                        name="phone"
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: 'Vui lòng nhập số điện thoại người nhận!',
-                                            },
-                                            {
-                                                len: 10,
-                                                message: 'Số điện thoại không hợp lệ!',
-                                            },
-                                        ]}
-                                        hasFeedback
-                                        initialValue={user.phone}
-                                    >
-                                        <Input type="number" placeholder="Số điện thoại" />
-                                    </Form.Item>
+                                        <Form.Item
+                                            label="Số điện thoại"
+                                            name="phone"
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: 'Vui lòng nhập số điện thoại người nhận!',
+                                                },
+                                                {
+                                                    len: 10,
+                                                    message: 'Số điện thoại không hợp lệ!',
+                                                },
+                                            ]}
+                                            hasFeedback
+                                            initialValue={user.phone}
+                                        >
+                                            <Input type="number" placeholder="Số điện thoại" />
+                                        </Form.Item>
 
-                                    <Form.Item
-                                        label="Địa chỉ nhận hàng"
-                                        name="address"
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: 'Vui lòng nhập địa chỉ nhận hàng!',
-                                            },
-                                        ]}
-                                        hasFeedback
-                                    >
-                                        <Input.TextArea />
-                                    </Form.Item>
-                                </Form>
+                                        <Form.Item label="Địa chỉ" name="address">
+                                            <AddressSelector form={form} />
+                                        </Form.Item>
 
-                                <p>Hình thức thanh toán</p>
-                                <Radio.Group value={valueRadio}>
-                                    <Radio value={1}>Thanh toán khi nhận hàng</Radio>
-                                </Radio.Group>
-                                <Divider style={{ margin: '10px 0' }} />
-                                <div className={clsx(styles.calculate)}>
-                                    <span> Tổng tiền</span>
-                                    <span className={clsx(styles.sum_final)}>
-                                        {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(
-                                            totalPrice || 0,
-                                        )}
-                                    </span>
-                                </div>
-                                <Divider style={{ margin: '10px 0' }} />
-                                <button onClick={() => form.submit()} disabled={isSubmit}>
-                                    {isSubmit && (
-                                        <span>
-                                            <LoadingOutlined /> &nbsp;
+                                        <Form.Item
+                                            label="Địa chỉ nhận hàng"
+                                            name="address"
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: 'Vui lòng nhập địa chỉ nhận hàng!',
+                                                },
+                                            ]}
+                                            hasFeedback
+                                        >
+                                            <Input.TextArea />
+                                        </Form.Item>
+                                    </Form>
+
+                                    <p>Hình thức thanh toán</p>
+                                    <Radio.Group value={valueRadio}>
+                                        <Radio value={1}>Thanh toán khi nhận hàng</Radio>
+                                    </Radio.Group>
+                                    {/* <CheckoutForm /> */}
+                                    {/* <MomoCheckout amount={totalAmount} /> */}
+                                    <Divider style={{ margin: '10px 0' }} />
+                                    <div className={clsx(styles.calculate)}>
+                                        <span> Tổng tiền</span>
+                                        <span className={clsx(styles.sum_final)}>
+                                            {new Intl.NumberFormat('vi-VN', {
+                                                style: 'currency',
+                                                currency: 'VND',
+                                            }).format(totalPrice || 0)}
                                         </span>
-                                    )}
-                                    Mua Hàng ({carts?.length ?? 0})
-                                </button>
-                            </div>
-                        </Col>
+                                    </div>
+                                    <Divider style={{ margin: '10px 0' }} />
+                                    <button onClick={() => form.submit()} disabled={isSubmit}>
+                                        {isSubmit && (
+                                            <span>
+                                                <LoadingOutlined /> &nbsp;
+                                            </span>
+                                        )}
+                                        Mua Hàng ({carts?.length ?? 0})
+                                    </button>
+                                </div>
+                            </Col>
+                        )}
                     </Row>
                 )}
                 {currentSteps === 2 && (
@@ -324,7 +344,9 @@ const Order = () => {
                             <Button type="primary" key="console" onClick={() => navigate('/')}>
                                 Tiếp Tục Mua Hàng
                             </Button>,
-                            <Button key="buy">Xem Lịch Sử Đơn Hàng</Button>,
+                            <Button key="buy" onClick={() => navigate('/book/history')}>
+                                Xem Lịch Sử Đơn Hàng
+                            </Button>,
                         ]}
                     />
                 )}

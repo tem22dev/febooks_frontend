@@ -3,13 +3,38 @@
     width: 1440px;
     margin: 0 auto;
 
+    .slider_home {
+        max-width: 815px;
+        height: 320px;
+    }
+
+    .img_banner {
+        width: 392px;
+        height: 156px;
+        border-radius: 8px;
+        overflow: hidden;
+
+        .banner_link {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .img {
+            display: inline-block;
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+        }
+    }
+
     .customize_row {
         display: flex;
         flex-wrap: wrap;
         gap: 10px 10px; //gap 10px, có 5 items trên 1 row => 4*10 = 40px cần được bớt ở width. 40/5items = 8px => calc trừ đi 8px
 
         .column {
-            width: calc(25% - 8px);
+            width: calc(20% - 8px);
 
             &:hover {
                 box-shadow: 0 0.0625rem 20px 0 rgba(0, 0, 0, 0.08);
