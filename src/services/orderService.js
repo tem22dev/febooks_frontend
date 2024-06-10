@@ -28,3 +28,12 @@ export const getAllOrder = async () => {
         throw Error(error);
     }
 };
+
+export const updateStatusOrder = async (data) => {
+    try {
+        const res = await request.put('order/update', data);
+        return res;
+    } catch (error) {
+        throw Error(error);
+    }
+};

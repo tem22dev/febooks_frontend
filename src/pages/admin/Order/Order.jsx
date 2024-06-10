@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import clsx from 'clsx';
-import { Layout, Table, Select, Tag } from 'antd';
+import { Layout, Table, Select, Tag, message, notification } from 'antd';
 import qs from 'qs';
 import moment from 'moment';
 
@@ -42,8 +42,22 @@ function Order() {
     }, []);
 
     // Update status order
-    const handleChangeStatusOrder = (value) => {
-        console.log(`selected ${value}`);
+    const handleChangeStatusOrder = async (value, record) => {
+        const data = {
+            status: value,
+            id: record.idOrder,
+        };
+
+        const res = await orderService.updateStatusOrder(data);
+        if (res && res.errCode === 0) {
+            message.success(res.message);
+        } else {
+            notification.error({
+                message: 'Có lỗi xảy ra',
+                description: res.errMessage,
+            });
+        }
+        console.log(res);
     };
 
     const columns = [
@@ -87,15 +101,16 @@ function Order() {
         {
             title: 'Trạng thái',
             dataIndex: 'status',
-            render: (text) => (
+            render: (text, record) => (
                 <Select
                     defaultValue={text}
                     style={{ width: '140px' }}
-                    onChange={handleChangeStatusOrder}
+                    onChange={(value) => handleChangeStatusOrder(value, record)}
                     options={[
                         { value: 0, label: <Tag color="#f50">Huỷ đơn</Tag> },
                         { value: 1, label: <Tag color="#108ee9">Chờ nhận hàng</Tag> },
                         { value: 2, label: <Tag color="#87d068">Đã giao hàng</Tag> },
+                        { value: 3, label: <Tag color="#2db7f5">Chờ xác nhận</Tag> },
                     ]}
                 />
             ),
