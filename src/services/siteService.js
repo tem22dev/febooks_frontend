@@ -63,6 +63,24 @@ export const paymentMomo = async (amount, orderId, orderInfo, returnUrl, notifyU
     }
 };
 
+export const getAllFollowing = async () => {
+    try {
+        const res = await request.get('site/following');
+        return res;
+    } catch (error) {
+        throw Error(error);
+    }
+};
+
+export const createFollowing = async (email) => {
+    try {
+        const res = await request.post('site/following/create', email);
+        return res;
+    } catch (error) {
+        throw error.response.data;
+    }
+};
+
 export const getAllSlider = async () => {
     try {
         const res = await request.get('site/slider');
