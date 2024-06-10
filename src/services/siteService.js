@@ -9,6 +9,15 @@ export const counterOrder = async () => {
     }
 };
 
+export const getRevenue = async () => {
+    try {
+        const res = await request.get('site/revenue');
+        return res;
+    } catch (error) {
+        throw Error(error);
+    }
+};
+
 export const counterGenre = async () => {
     try {
         const res = await request.get('site/counter/genre');
