@@ -1,0 +1,40 @@
+.wrapper {
+    margin: 20px;
+    min-height: calc(100vh - 104px);
+    border-radius: 8px;
+}
+
+.form {
+    max-width: none;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 8px;
+    padding: 24px;
+}
+
+.action {
+    text-align: right;
+}
+
+.wrapper_table {
+    max-width: none;
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 10px;
+    margin-top: 14px;
+}
+
+.heading_table {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.title_table {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 500;
+}
+
+.wrapper_btn {
+    margin-left: auto;
+}

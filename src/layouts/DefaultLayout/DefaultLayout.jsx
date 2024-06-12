@@ -6,9 +6,7 @@ function DefaultLayout({ children }) {
     return (
         <>
             <Header />
-            {/* <Sidebar /> */}
             {children}
-            {/* <Footer /> */}
         </>
     );
 }
