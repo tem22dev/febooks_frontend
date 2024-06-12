@@ -35,7 +35,7 @@ const TextEditor = ({ desc, setDesc }) => {
                         'indent',
                         // 'quote',
                         'insertLink',
-                        'insertImage',
+                        // 'insertImage',
                         // 'insertVideo',
                         // 'insertFile',
                         'insertTable',
