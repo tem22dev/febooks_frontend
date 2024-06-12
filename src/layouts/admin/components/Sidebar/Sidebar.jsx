@@ -41,7 +41,7 @@ function Sidebar() {
         {
             key: '/admin/dash',
             icon: <DashboardOutlined />,
-            label: <Link to="/admin/dash">Bảng điều khiển</Link>,
+            label: <Link to="/admin/dash">Trang chính</Link>,
         },
         {
             key: 'book',
@@ -109,8 +109,8 @@ function Sidebar() {
             label: 'Quản lý hệ thống',
             children: [
                 {
-                    key: '/admin/dash/logo',
-                    label: <Link to="/admin/dash/logo">Logo</Link>,
+                    key: '/admin/dash/visits',
+                    label: <Link to="/admin/dash/visits">Lượng truy cập</Link>,
                 },
             ],
         },

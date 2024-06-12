@@ -18,6 +18,7 @@ const routes = {
     supplier: 'admin/dash/supplier',
     slider: 'admin/dash/sliders',
     following: 'admin/dash/following',
+    visits: 'admin/dash/visits',
     // dashAuth: 'admin/auth/login',
 };
 

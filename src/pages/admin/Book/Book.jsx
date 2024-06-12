@@ -260,12 +260,12 @@ function Book() {
                 <div className={clsx(styles.heading_table)}>
                     <h1 className={clsx(styles.title_table)}>Bảng sách</h1>
                     <Space className={clsx(styles.wrapper_btn)}>
-                        <Button type="primary" icon={<LogoutOutlined />}>
+                        {/* <Button type="primary" icon={<LogoutOutlined />}>
                             Export
-                        </Button>
-                        <Button type="primary" icon={<CloudDownloadOutlined />} onClick={showModalImportBook}>
+                        </Button> */}
+                        {/* <Button type="primary" icon={<CloudDownloadOutlined />} onClick={showModalImportBook}>
                             Import
-                        </Button>
+                        </Button> */}
                         <Button type="primary" icon={<PlusCircleOutlined />}>
                             <Link to="add">Thêm mới</Link>
                         </Button>

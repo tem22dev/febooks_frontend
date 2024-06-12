@@ -9,6 +9,15 @@ export const counterOrder = async () => {
     }
 };
 
+export const getRevenue = async () => {
+    try {
+        const res = await request.get('site/revenue');
+        return res;
+    } catch (error) {
+        throw Error(error);
+    }
+};
+
 export const counterGenre = async () => {
     try {
         const res = await request.get('site/counter/genre');
@@ -72,6 +81,15 @@ export const getAllFollowing = async () => {
     }
 };
 
+export const getAllVisits = async () => {
+    try {
+        const res = await request.get('site/visits-all');
+        return res;
+    } catch (error) {
+        throw Error(error);
+    }
+};
+
 export const createFollowing = async (email) => {
     try {
         const res = await request.post('site/following/create', email);
@@ -127,6 +145,15 @@ export const uploadSliderImg = async (file) => {
                 'Content-Type': 'multipart/form-data',
             },
         });
+        return response;
+    } catch (error) {
+        throw error.response.data;
+    }
+};
+
+export const createVisit = async (data) => {
+    try {
+        const response = await request.post('site/visits', data);
         return response;
     } catch (error) {
         throw error.response.data;
