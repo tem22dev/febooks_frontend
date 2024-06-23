@@ -37,6 +37,7 @@ function Dashboard() {
                     month: item.month,
                     total_revenue: parseFloat(item.total_revenue), // đảm bảo giá trị là số
                 }));
+                console.log(formattedData);
                 setRevenueData(formattedData);
             }
         };

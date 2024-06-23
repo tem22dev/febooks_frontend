@@ -150,7 +150,13 @@ function Header() {
                         <div className={clsx(styles.header_logo)}>
                             <Link to="/">
                                 <span className={clsx(styles.logo)}>
-                                    <FaReact className={clsx(styles.rotate, styles.icon_react)} /> Febooks
+                                    {/* <FaReact className={clsx(styles.rotate, styles.icon_react)} /> Febooks */}
+                                    <Avatar
+                                        shape="square"
+                                        size="default"
+                                        src={`${ENV.VITE_BASE_URL_BACKEND}/images/accounts/febooks.png`}
+                                    />{' '}
+                                    Febooks
                                 </span>
                             </Link>
                             <Input

@@ -16,7 +16,7 @@ function Home() {
     const [listCategory, setListCategory] = useState([]);
     const [listBook, setListBook] = useState([]);
     const [current, setCurrent] = useState(1);
-    const [pageSize, setPageSize] = useState(4);
+    const [pageSize, setPageSize] = useState(10);
     const [total, setTotal] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const [filter, setFilter] = useState('');
